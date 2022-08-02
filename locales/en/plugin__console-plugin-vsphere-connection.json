@@ -1,1 +1,8 @@
-{}
+{
+  "Loading vSphere connection status...": "Loading vSphere connection status...",
+  "The vSphere Connection check is failing.": "The vSphere Connection check is failing.",
+  "Resource": "Resource",
+  "Status": "Status",
+  "vSphere Problem Detector": "vSphere Problem Detector",
+  "vSphere": "vSphere"
+}

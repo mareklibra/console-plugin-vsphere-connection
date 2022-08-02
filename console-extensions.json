@@ -22,21 +22,25 @@
     "type": "console.dashboards/overview/health/prometheus",
     "properties": {
       "title": "%plugin__console-plugin-vsphere-connection~vSphere%",
-      "queries": [],
+      "queries": [
+        "vsphere_sync_errors"
+      ],
       "healthHandler": {
         "$codeRef": "vsphereStatus.healthHandler"
       },
       "popupComponent": {
         "$codeRef": "vsphereStatus.default"
       },
+      "popupClassname": "plugin-vsphere-status-popup",
+      "popupTitle": "%plugin__console-plugin-vsphere-connection~vSphere configurations%",
+      "popupKeepOnOutsideClick": true,
       "additionalResource": {
         "kind": "ConfigMap",
         "name": "cloud-provider-config",
         "namespace": "openshift-config",
         "isList": false,
         "namespaced": true
-      },
-      "popupTitle": "%plugin__console-plugin-vsphere-connection~vSphere%"
+      }
     }
   }
 ]

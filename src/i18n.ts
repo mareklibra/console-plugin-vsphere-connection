@@ -7,6 +7,7 @@ import { useTranslation as useReactI18NextTranslation } from 'react-i18next';
 // that they do not need this file.
 
 // t('plugin__console-plugin-vsphere-connection~vSphere')
+// t('plugin__console-plugin-vsphere-connection~vSphere configurations')
 
 export function useTranslation() {
   return useReactI18NextTranslation('plugin__console-plugin-vsphere-connection');
