@@ -1,0 +1,42 @@
+/**
+ * This file declares all extensions contributed by the plugin.
+ *
+ * Depending on extension 'type', the 'properties' object may contain code references, encoded
+ * as object literals { $codeRef: string }. The '$codeRef' value should be formatted as either
+ * 'moduleName.exportName' (referring to a named export) or 'moduleName' (referring to the
+ * 'default' export). Only the plugin's exposed modules may be used in code references.
+ */
+[
+  {
+    "type": "console.flag/modelXX",
+    "properties": {
+      "flag": "VSPHERE_OPERATOR",
+      "model": {
+        "group": "todo.com",
+        "version": "v1",
+        "kind": "TODO"
+      }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/prometheus",
+    "properties": {
+      "title": "%plugin__console-plugin-vsphere-connection~vSphere%",
+      "queries": [],
+      "healthHandler": {
+        "$codeRef": "vsphereStatus.healthHandler"
+      },
+      "popupComponent": {
+        "$codeRef": "vsphereStatus.default"
+      },
+      "additionalResource": {
+        "kind": "ConfigMap",
+        "name": "cloud-provider-config",
+        "namespace": "openshift-config",
+        "isList": false,
+        "namespaced": true
+      },
+      "popupTitle": "%plugin__console-plugin-vsphere-connection~vSphere%"
+    }
+  }
+]
