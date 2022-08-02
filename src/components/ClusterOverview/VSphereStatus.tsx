@@ -10,176 +10,105 @@ import {
 import {
   PrometheusHealthPopupProps,
   PrometheusHealthHandler,
-  // SubsystemHealth,
+  SubsystemHealth,
 } from '@openshift-console/dynamic-plugin-sdk/lib/extensions/dashboard-types';
 import { Link } from 'react-router-dom';
 // import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
 import { useTranslation } from '../../i18n';
 
+import './VSphereStatus.css';
+
 // https://issues.redhat.com/browse/MGMT-9085
 // https://access.redhat.com/solutions/6677901
+
+const getVSphereHealth = (
+  responses: PrometheusHealthPopupProps['responses'],
+  configMapResult: PrometheusHealthPopupProps['k8sResult'],
+): SubsystemHealth => {
+  if (!configMapResult) {
+    return { state: HealthState.LOADING };
+  }
+
+  if (configMapResult.loadError) {
+    // TODO: decide between 404 and other error
+    // TODO: Is 404 Degraded and other Error??
+    return { state: HealthState.ERROR, message: 'Failing to load cloud-provider-config config map.' };
+  }
+
+  if (!configMapResult.loaded) {
+    return { state: HealthState.LOADING };
+  }
+
+  // TODO check: does data contain 'secret-name = "vsphere-creds"'?
+
+  if (!!responses.find((r) => r.error)) {
+    if (configMapResult.loadError) {
+      return { state: HealthState.ERROR, message: 'Prometheus query failed.' };
+    }
+  }
+  // TODO: use Prometheus vsphere_sync_errors vector metric to check sync errors (by vSphere Problem Detector)
+
+  // TODO: if ConfigMap is preent but error not reported then progress
+
+  return { state: HealthState.OK };
+};
+
 const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
   const { t } = useTranslation();
   console.log('-- VSphereStatus, responses: ', responses, ', k8sResult: ', k8sResult);
 
-  /* TODO:
-  - Show form + Save configurations button
-  */
+  const health = getVSphereHealth(responses, k8sResult);
 
-  const operatorHealth = {
-    state: HealthState.LOADING,
-    message: 'TODO',
-    icon: undefined,
-  };
-  const temperatureHealth = operatorHealth;
+  if ([HealthState.OK, HealthState.WARNING].includes(health.state)) {
+    /* TODO:
+    - Show form + Save configurations button
+    */
+    return <div />;
+  }
+
+  if (health.state === HealthState.LOADING) {
+    return (
+      <Stack hasGutter>
+        <StackItem>
+          {t(
+            'Loading vSphere connection status...'
+          )}
+        </StackItem>
+      </Stack>
+    );
+  }
 
   return (
-    <Stack hasGutter>
-      <StackItem>
-        {t(
-          'Designed for parallel processing, the GPUs are used in a wide range of applications, including graphics and video rendering.',
-        )}
-      </StackItem>
-      <StackItem>
-        <StatusPopupSection firstColumn={t('Resource')} secondColumn={t('Status')}>
-          <StatusPopupItem value={operatorHealth.message} icon={operatorHealth.icon}>
-            <Link to="/monitoring/query-browser?query0=gpu_operator_reconciliation_status">
-              {t('Operator')}
-            </Link>
-          </StatusPopupItem>
-          <StatusPopupItem value={temperatureHealth.message} icon={temperatureHealth.icon}>
-            <Link to="/monitoring/query-browser?query0=DCGM_FI_DEV_GPU_TEMP">
-              {t('Temperature sensors')}
-            </Link>
-          </StatusPopupItem>
-        </StatusPopupSection>
-      </StackItem>
-    </Stack>
+    <div>
+      <Stack hasGutter>
+        <StackItem>
+          {t(
+            'The vSphere Connection check is failing.',
+          )}
+        </StackItem>
+        <StackItem>
+          <StatusPopupSection firstColumn={t('Resource')} secondColumn={t('Status')}>
+            <StatusPopupItem value={health.message}>
+              <Link to="/monitoring/query-browser?query0=vsphere_sync_errors">
+                {t('vSphere Problem Detector')}
+              </Link>
+            </StatusPopupItem>
+          </StatusPopupSection>
+        </StackItem>
+      </Stack>
+    </div>
   );
 };
 
 export default VSphereStatus;
 
-export const healthHandler: PrometheusHealthHandler = (responses, _/* skip */, additionalResource) => {
-  /* TODO:
-  - is cloud-provider-config ConfigMap in openshift-config ?
-  - does data conatin 'secret-name = "vsphere-creds"'?
-  - use Prometheus vsphere_sync_errors vector metric to check sync errors (by vSphere Problem Detector)
-  */
-  console.log('-- healthHandler, responses: ', responses, ', additionalReource: ', additionalResource);
+export const healthHandler: PrometheusHealthHandler = (responses, _skip, additionalResource) => {
+  console.log(
+    '-- healthHandler, responses: ',
+    responses,
+    ', additionalReource: ',
+    additionalResource,
+  );
 
-  const healthStates = [HealthState.ERROR];
-
-  if (healthStates.includes(HealthState.LOADING)) {
-    return { state: HealthState.LOADING };
-  }
-  if (healthStates.includes(HealthState.ERROR)) {
-    return { state: HealthState.ERROR };
-  }
-  if (healthStates.includes(HealthState.WARNING)) {
-    return { state: HealthState.WARNING };
-  }
-  if (healthStates.includes(HealthState.NOT_AVAILABLE)) {
-    return { state: HealthState.NOT_AVAILABLE };
-  }
-  if (healthStates.includes(HealthState.PROGRESS)) {
-    return { state: HealthState.PROGRESS };
-  }
-  if (healthStates.includes(HealthState.UNKNOWN)) {
-    return { state: HealthState.UNKNOWN };
-  }
-  return { state: HealthState.OK };
+  return { state: getVSphereHealth(responses, additionalResource).state };
 };
-/*
-type SubsystemHealthHandler = (
-  responses: { response: PrometheusResponse; error: unknown }[],
-) => SubsystemHealth & { icon?: React.ReactNode };
-
-const getTemperatureHealth: SubsystemHealthHandler = (responses) => {
-  const { response, error } = responses[1];
-  if (!response) {
-    return {
-      state: HealthState.LOADING,
-    };
-  } else if (error || !response.data.result?.length) {
-    return {
-      state: HealthState.NOT_AVAILABLE,
-      message: 'Not available',
-    };
-  }
-
-  const temperatures: number[] =
-    response.data.result
-      ?.filter((r) => r.value?.[1] !== undefined)
-      .map((r) => Number.parseInt(r.value?.[1] as string)) || []; // TODO remove false-y values ?
-
-  temperatures.sort((a, b) => b - a);
-
-  if (temperatures[0] > 70) {
-    return {
-      state: HealthState.ERROR,
-      message: 'Danger',
-    };
-  } else if (temperatures[0] > 60) {
-    return {
-      state: HealthState.WARNING,
-      message: 'Warning',
-    };
-  }
-
-  return {
-    state: HealthState.OK,
-    message: 'Healthy',
-    icon: <CheckCircleIcon color={okColor.value} />,
-  };
-};
-
-const getOperatorHealth: SubsystemHealthHandler = (responses) => {
-  const { response, error } = responses[0];
-  if (!response) {
-    return {
-      state: HealthState.LOADING,
-    };
-  } else if (error) {
-    return {
-      state: HealthState.NOT_AVAILABLE,
-      message: 'Not available',
-    };
-  }
-
-  const result = response.data.result?.[0]?.value?.[1];
-
-  if (!result) {
-    return { state: HealthState.NOT_AVAILABLE, message: 'Not available' };
-  }
-
-  let state: HealthState;
-  let message: string;
-  let icon: React.ReactNode;
-  switch (result) {
-    case '0':
-      state = HealthState.PROGRESS;
-      message = 'Pending';
-      icon = <InProgressIcon />;
-      break;
-    case '1':
-      state = HealthState.OK;
-      message = 'Healthy';
-      icon = <CheckCircleIcon color={okColor.value} />;
-      break;
-    case '-1':
-      state = HealthState.NOT_AVAILABLE;
-      message = 'Cluster policy not available';
-      break;
-    case '-2':
-      state = HealthState.ERROR;
-      message = 'Degraded';
-      break;
-    default:
-      state = HealthState.UNKNOWN;
-      message = 'Unknown';
-  }
-
-  return { state, message, icon };
-};
-*/
