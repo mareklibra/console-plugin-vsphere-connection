@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
-// import { CheckCircleIcon, InProgressIcon } from '@patternfly/react-icons';
 import {
   HealthState,
-  // PrometheusResponse,
   StatusPopupItem,
   StatusPopupSection,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -13,10 +11,10 @@ import {
   SubsystemHealth,
 } from '@openshift-console/dynamic-plugin-sdk/lib/extensions/dashboard-types';
 import { Link } from 'react-router-dom';
-// import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
 import { useTranslation } from '../../i18n';
 
 import './VSphereStatus.css';
+import { VSphereConnection } from '../VSphereConnection';
 
 // https://issues.redhat.com/browse/MGMT-9085
 // https://access.redhat.com/solutions/6677901
@@ -32,7 +30,10 @@ const getVSphereHealth = (
   if (configMapResult.loadError) {
     // TODO: decide between 404 and other error
     // TODO: Is 404 Degraded and other Error??
-    return { state: HealthState.ERROR, message: 'Failing to load cloud-provider-config config map.' };
+    return {
+      state: HealthState.ERROR,
+      message: 'Failing to load cloud-provider-config config map.',
+    };
   }
 
   if (!configMapResult.loaded) {
@@ -53,27 +54,32 @@ const getVSphereHealth = (
   return { state: HealthState.OK };
 };
 
-const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
+const VSphereStatus: React.FC<PrometheusHealthPopupProps & { hide: () => void }> = ({
+  hide,
+  responses,
+  k8sResult,
+}) => {
   const { t } = useTranslation();
-  console.log('-- VSphereStatus, responses: ', responses, ', k8sResult: ', k8sResult);
+  console.log(
+    '-- VSphereStatus, responses: ',
+    responses,
+    ', k8sResult: ',
+    k8sResult,
+    ', hide: ',
+    hide,
+  );
 
   const health = getVSphereHealth(responses, k8sResult);
 
-  if ([HealthState.OK, HealthState.WARNING].includes(health.state)) {
-    /* TODO:
-    - Show form + Save configurations button
-    */
-    return <div />;
+  if ([HealthState.OK, HealthState.WARNING].includes(health.state) && k8sResult?.data) {
+    const cloudProviderConfig = k8sResult.data;
+    return <VSphereConnection hide={hide} cloudProviderConfig={cloudProviderConfig} />;
   }
 
   if (health.state === HealthState.LOADING) {
     return (
       <Stack hasGutter>
-        <StackItem>
-          {t(
-            'Loading vSphere connection status...'
-          )}
-        </StackItem>
+        <StackItem>{t('Loading vSphere connection status...')}</StackItem>
       </Stack>
     );
   }
@@ -81,11 +87,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sRes
   return (
     <div>
       <Stack hasGutter>
-        <StackItem>
-          {t(
-            'The vSphere Connection check is failing.',
-          )}
-        </StackItem>
+        <StackItem>{t('The vSphere Connection check is failing.')}</StackItem>
         <StackItem>
           <StatusPopupSection firstColumn={t('Resource')} secondColumn={t('Status')}>
             <StatusPopupItem value={health.message}>

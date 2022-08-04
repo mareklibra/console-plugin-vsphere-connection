@@ -27,20 +27,20 @@ $ kubectl patch consoles.operator.openshift.io cluster --patch '[{"op": "add", "
 
 ### Local development
 
-OpenShift Console plugin works as a remote bundle for the OCP console. To run OpenShift
-Console vSphere Connection Plugin there should be an instance of the OCP console up and running.
-Follow these steps to run the OCP Console in development mode:
+OpenShift Console plugin works as a remote bundle for the OCP console. To run OpenShift Console
+vSphere Connection Plugin there should be an instance of the OCP console up and running. Follow
+these steps to run the OCP Console in development mode:
 
- - Follow everything as mentioned in the console [README.md](https://github.com/openshift/console)
-   to build the application.
- - Run the console bridge as follows `./bin/bridge -plugins console-plugin-vsphere-connection=http://127.0.0.1:9001/`
- - Run developemnt mode of console by going into `console/frontend` and running `yarn run dev`
+- Follow everything as mentioned in the console [README.md](https://github.com/openshift/console) to
+  build the application.
+- Run the console bridge as follows
+  `./bin/bridge -plugins console-plugin-vsphere-connection=http://127.0.0.1:9001/`
+- Run developemnt mode of console by going into `console/frontend` and running `yarn run dev`
 
 After the OCP console is set as required by the ODF Console. Perform the following steps to make it
 run:
 
- - TODO: Install & setup the vSphere Operator
- - Clone this repo
- - Pull all required dependencies by running `yarn install`
- - Run the development mode by running `yarn start`
-
+- TODO: Install & setup the vSphere Operator
+- Clone this repo
+- Pull all required dependencies by running `yarn install`
+- Run the development mode by running `yarn start`
