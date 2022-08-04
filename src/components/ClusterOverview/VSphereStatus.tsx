@@ -42,7 +42,7 @@ const getVSphereHealth = (
 
   // TODO check: does data contain 'secret-name = "vsphere-creds"'?
 
-  if (!!responses.find((r) => r.error)) {
+  if (responses.find((r) => r.error)) {
     if (configMapResult.loadError) {
       return { state: HealthState.ERROR, message: 'Prometheus query failed.' };
     }

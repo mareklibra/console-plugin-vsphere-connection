@@ -67,7 +67,17 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({ hide, cloudPr
     };
 
     doItAsync();
-  }, [cloudProviderConfig]);
+  }, [
+    SecretModel,
+    cloudProviderConfig,
+    isLoaded,
+    setDatacenter,
+    setDefaultdatastore,
+    setFolder,
+    setPassword,
+    setUsername,
+    setVcenter,
+  ]);
 
   return (
     <Form>

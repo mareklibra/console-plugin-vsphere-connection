@@ -33,7 +33,7 @@ export const ConnectionFormContextProvider: React.FC<{
       folder,
       setFolder,
     }),
-    [],
+    [datacenter, defaultdatastore, folder, password, username, vcenter],
   );
 
   return <ConnectionFormContext.Provider value={value}>{children}</ConnectionFormContext.Provider>;
