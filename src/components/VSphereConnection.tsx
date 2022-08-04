@@ -8,13 +8,12 @@ import { initialLoad } from './initialLoad';
 
 type VSphereConnectionProps = {
   hide: () => void;
-  cloudProviderConfig: ConfigMap;
+  cloudProviderConfig?: ConfigMap;
 };
 
 const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({ hide, cloudProviderConfig }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [SecretModel] = useK8sModel({ group: 'app' /* TODO ??? */, version: 'v1', kind: 'Secret' });
-  console.log('--- VSphereConnectionForm SecretModel: ', SecretModel);
 
   const {
     vcenter,
@@ -42,28 +41,26 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({ hide, cloudPr
 
   React.useEffect(() => {
     const doItAsync = async () => {
+      if (isLoaded) {
+        return;
+      }
       if (!cloudProviderConfig) {
         return;
       }
 
-      if (!isLoaded) {
-        if (
-          await initialLoad(
-            {
-              setVcenter,
-              setUsername,
-              setPassword,
-              setDatacenter,
-              setDefaultdatastore,
-              setFolder,
-            },
-            SecretModel,
-            cloudProviderConfig,
-          )
-        ) {
-          setIsLoaded(true);
-        }
-      }
+      setIsLoaded(true);
+      await initialLoad(
+        {
+          setVcenter,
+          setUsername,
+          setPassword,
+          setDatacenter,
+          setDefaultdatastore,
+          setFolder,
+        },
+        SecretModel,
+        cloudProviderConfig,
+      );
     };
 
     doItAsync();

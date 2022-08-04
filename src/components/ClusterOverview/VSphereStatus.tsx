@@ -2,6 +2,8 @@ import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
 import {
   HealthState,
+  PrometheusResult,
+  PrometheusValue,
   StatusPopupItem,
   StatusPopupSection,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -12,14 +14,22 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk/lib/extensions/dashboard-types';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../../i18n';
+import { VSphereConnection } from '../VSphereConnection';
+import { ConfigMap } from '../../resources';
 
 import './VSphereStatus.css';
-import { VSphereConnection } from '../VSphereConnection';
+import { TFunction } from 'react-i18next';
 
 // https://issues.redhat.com/browse/MGMT-9085
 // https://access.redhat.com/solutions/6677901
 
+const getPrometheusMetricValue = (
+  prometheusResult: PrometheusResult[],
+  reason: string,
+): PrometheusValue | undefined => prometheusResult.find((r) => r.metric.reason === reason)?.value;
+
 const getVSphereHealth = (
+  t: TFunction = (s: string) => s,
   responses: PrometheusHealthPopupProps['responses'],
   configMapResult: PrometheusHealthPopupProps['k8sResult'],
 ): SubsystemHealth => {
@@ -28,11 +38,9 @@ const getVSphereHealth = (
   }
 
   if (configMapResult.loadError) {
-    // TODO: decide between 404 and other error
-    // TODO: Is 404 Degraded and other Error??
     return {
-      state: HealthState.ERROR,
-      message: 'Failing to load cloud-provider-config config map.',
+      state: HealthState.WARNING,
+      message: t('Failed to load vSphere connection config map.'),
     };
   }
 
@@ -40,16 +48,50 @@ const getVSphereHealth = (
     return { state: HealthState.LOADING };
   }
 
-  // TODO check: does data contain 'secret-name = "vsphere-creds"'?
+  // by vSphere Problem Detector
+  if (responses.length < 1) {
+    return { state: HealthState.LOADING };
+  }
 
   if (responses.find((r) => r.error)) {
-    if (configMapResult.loadError) {
-      return { state: HealthState.ERROR, message: 'Prometheus query failed.' };
-    }
+    console.error('Prometheus query error: ', responses);
+    return { state: HealthState.ERROR, message: t('Prometheus query failed.') };
   }
-  // TODO: use Prometheus vsphere_sync_errors vector metric to check sync errors (by vSphere Problem Detector)
 
-  // TODO: if ConfigMap is preent but error not reported then progress
+  if (!responses[0].response?.status) {
+    return { state: HealthState.LOADING };
+  }
+
+  const prometheusResult = responses[0].response?.data?.result;
+  if (responses[0].response.status !== 'success' || !prometheusResult) {
+    console.error('Prometheus query error: ', responses);
+    return { state: HealthState.ERROR, message: t('Prometheus query failed.') };
+  }
+
+  if (getPrometheusMetricValue(prometheusResult, 'InvalidCredentials')?.[0]) {
+    console.error(
+      'Prometheus query - invalid credentials: ',
+      getPrometheusMetricValue(prometheusResult, 'InvalidCredentials'),
+    );
+    return { state: HealthState.WARNING, message: t('Invalid credentials') };
+  }
+
+  if (getPrometheusMetricValue(prometheusResult, 'SyncError')?.[0]) {
+    console.error(
+      'Prometheus query - synchronization failed: ',
+      getPrometheusMetricValue(prometheusResult, t('SyncError')),
+    );
+    return { state: HealthState.WARNING, message: 'Synchronization failed' };
+  }
+
+  const anyFailingMetric = prometheusResult.find((r) => r.value?.[0]);
+  if (anyFailingMetric) {
+    console.error('Prometheus query - a failing metric found: ', anyFailingMetric);
+    return {
+      state: HealthState.WARNING,
+      message: t('Failing {{reason}}', { reason: anyFailingMetric.metric.reason }),
+    };
+  }
 
   return { state: HealthState.OK };
 };
@@ -60,19 +102,10 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps & { hide: () => void }>
   k8sResult,
 }) => {
   const { t } = useTranslation();
-  console.log(
-    '-- VSphereStatus, responses: ',
-    responses,
-    ', k8sResult: ',
-    k8sResult,
-    ', hide: ',
-    hide,
-  );
-
-  const health = getVSphereHealth(responses, k8sResult);
+  const health = getVSphereHealth(t, responses, k8sResult);
 
   if ([HealthState.OK, HealthState.WARNING].includes(health.state) && k8sResult?.data) {
-    const cloudProviderConfig = k8sResult.data;
+    const cloudProviderConfig = k8sResult.data as ConfigMap | undefined;
     return <VSphereConnection hide={hide} cloudProviderConfig={cloudProviderConfig} />;
   }
 
@@ -105,12 +138,5 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps & { hide: () => void }>
 export default VSphereStatus;
 
 export const healthHandler: PrometheusHealthHandler = (responses, _skip, additionalResource) => {
-  console.log(
-    '-- healthHandler, responses: ',
-    responses,
-    ', additionalReource: ',
-    additionalResource,
-  );
-
-  return { state: getVSphereHealth(responses, additionalResource).state };
+  return { state: getVSphereHealth(undefined, responses, additionalResource).state };
 };
