@@ -4,5 +4,11 @@
   "Resource": "Resource",
   "Status": "Status",
   "vSphere Problem Detector": "vSphere Problem Detector",
-  "vSphere": "vSphere"
+  "Failed to load vSphere connection config map.": "Failed to load vSphere connection config map.",
+  "Prometheus query failed.": "Prometheus query failed.",
+  "Invalid credentials": "Invalid credentials",
+  "SyncError": "SyncError",
+  "Failing {{reason}}": "Failing {{reason}}",
+  "vSphere": "vSphere",
+  "vSphere configurations": "vSphere configurations"
 }
