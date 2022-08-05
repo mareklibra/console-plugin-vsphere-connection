@@ -2,7 +2,7 @@ import { K8sModel, k8sGet } from '@openshift-console/dynamic-plugin-sdk';
 
 import { ConfigMap, Secret } from '../resources';
 import { ConnectionFormContextSetters } from './types';
-import { parseKeyValue } from './utils';
+import { decodeBase64, parseKeyValue } from './utils';
 
 export const initialLoad = async (
   setters: ConnectionFormContextSetters,
@@ -45,10 +45,11 @@ export const initialLoad = async (
       return false;
     }
 
-    const secretKeyValues = parseKeyValue(secret.data, ':');
-    // TODO: following is base64 encoded, decode it first!
-    setters.setUsername(secretKeyValues[`${server}.username`]);
-    setters.setPassword(secretKeyValues[`${server}.password`]);
+    const secretKeyValues = secret.data;
+    const username = decodeBase64(secretKeyValues[`${server}.username`]);
+    const pwd = decodeBase64(secretKeyValues[`${server}.password`]);
+    setters.setUsername(username);
+    setters.setPassword(pwd);
   } catch (e) {
     console.error(
       `Failed to load "${keyValues['secret-name']}" from "${keyValues['secret-namespace']}" secret: `,

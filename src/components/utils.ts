@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
   console.log('--- parseKeyValue config: ', config);
   const lines = config.split('\n');
@@ -17,3 +19,6 @@ export const parseKeyValue = (config: string, delimiter = '='): { [key: string]:
 
   return result;
 };
+
+export const encodeBase64 = (data: string) => Buffer.from(data).toString('base64');
+export const decodeBase64 = (data: string) => Buffer.from(data, 'base64').toString('ascii');
