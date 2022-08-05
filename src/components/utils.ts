@@ -1,7 +1,6 @@
 import { Buffer } from 'buffer';
 
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
-  console.log('--- parseKeyValue config: ', config);
   const lines = config.split('\n');
 
   const result: { [key: string]: string } = {};

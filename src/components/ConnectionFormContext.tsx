@@ -6,12 +6,12 @@ const ConnectionFormContext = React.createContext<ConnectionFormContextData | nu
 export const ConnectionFormContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [vcenter, setVcenter] = React.useState<string>();
-  const [username, setUsername] = React.useState<string>();
-  const [password, setPassword] = React.useState<string>();
-  const [datacenter, setDatacenter] = React.useState<string>();
-  const [defaultdatastore, setDefaultdatastore] = React.useState<string>();
-  const [folder, setFolder] = React.useState<string>();
+  const [vcenter, setVcenter] = React.useState<string>('');
+  const [username, setUsername] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [datacenter, setDatacenter] = React.useState<string>('');
+  const [defaultdatastore, setDefaultdatastore] = React.useState<string>('');
+  const [folder, setFolder] = React.useState<string>('');
 
   const value = React.useMemo(
     () => ({
