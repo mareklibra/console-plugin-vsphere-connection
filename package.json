@@ -15,8 +15,8 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,md,scss,yaml,yml}'"
   },
   "devDependencies": {
-    "@openshift-console/dynamic-plugin-sdk": "0.0.12",
-    "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.7",
+    "@openshift-console/dynamic-plugin-sdk": "0.0.13",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.8",
     "@openshift-console/plugin-shared": "^0.0.1",
     "@patternfly/react-core": "4.214.1",
     "@patternfly/react-icons": "^4.49.19",
@@ -64,7 +64,7 @@
       "vsphereStatus": "./components/ClusterOverview/VSphereStatus"
     },
     "dependencies": {
-      "@console/pluginAPI": "*"
+      "@console/pluginAPI": "~4.10.0"
     }
   }
 }
