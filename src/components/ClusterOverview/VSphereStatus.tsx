@@ -31,7 +31,9 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps & { hide: () => void }>
 
   if ([HealthState.OK, HealthState.WARNING].includes(health.state) && k8sResult?.data) {
     const cloudProviderConfig = k8sResult.data as ConfigMap | undefined;
-    return <VSphereConnection hide={hide} cloudProviderConfig={cloudProviderConfig} />;
+    return (
+      <VSphereConnection hide={hide} cloudProviderConfig={cloudProviderConfig} health={health} />
+    );
   }
 
   if (health.state === HealthState.LOADING) {

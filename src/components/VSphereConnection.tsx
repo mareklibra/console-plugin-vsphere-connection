@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { ActionGroup, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  ActionGroup,
+  Alert,
+  AlertVariant,
+  Button,
+  Form,
+  FormGroup,
+  TextInput,
+} from '@patternfly/react-core';
+import { HealthState, SubsystemHealth, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 
+import { useTranslation } from '../i18n';
 import { ConfigMap } from '../resources';
 import { ConnectionFormContextProvider, useConnectionFormContext } from './ConnectionFormContext';
 import { initialLoad } from './initialLoad';
@@ -9,9 +18,15 @@ import { initialLoad } from './initialLoad';
 type VSphereConnectionProps = {
   hide: () => void;
   cloudProviderConfig?: ConfigMap;
+  health: SubsystemHealth;
 };
 
-const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({ hide, cloudProviderConfig }) => {
+const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
+  hide,
+  cloudProviderConfig,
+  health,
+}) => {
+  const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [SecretModel] = useK8sModel({ group: 'app' /* TODO ??? */, version: 'v1', kind: 'Secret' });
 
@@ -144,6 +159,11 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({ hide, cloudPr
           onChange={setFolder}
         />
       </FormGroup>
+      {health.state === HealthState.WARNING && (
+        <Alert isInline title={t('vSphere Problem Detector')} variant={AlertVariant.warning}>
+          {health.message}
+        </Alert>
+      )}
       <ActionGroup>
         <Button variant="primary" onClick={onSave}>
           Save configuration
