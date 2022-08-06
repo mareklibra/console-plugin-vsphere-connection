@@ -15,7 +15,7 @@ export const verifyConnection = async (
     kind: 'StorageClass',
     apiVersion: 'storage.k8s.io/v1',
     metadata: {
-      name: 'vsphere-sc', // TODO: can this be generated??
+      generateName: 'vsphere-sc-',
     },
     provisioner: 'kubernetes.io/vsphere-volume',
     parameters: {

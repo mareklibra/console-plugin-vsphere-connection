@@ -66,7 +66,6 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
   const onSave = () => {
     setIsSaving(true);
     const doItAsync = async () => {
-      // TODO: a warning based on prometheus metric will apear until next error
       setError('');
 
       let errorMsg = await persist(
