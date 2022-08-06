@@ -16,6 +16,8 @@ import { ConfigMap } from '../resources';
 import { ConnectionFormContextProvider, useConnectionFormContext } from './ConnectionFormContext';
 import { initialLoad } from './initialLoad';
 import { persist } from './persist';
+import { verifyConnection } from './verifyConnection';
+import { InProgress } from './InProgress';
 
 type VSphereConnectionProps = {
   hide: () => void;
@@ -30,9 +32,16 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState<string>();
   const [SecretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
   const [ConfigMapModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'ConfigMap' });
+  const [StorageClassModel] = useK8sModel({
+    group: 'storage.k8s.io',
+    version: 'v1',
+    kind: 'StorageClass',
+  });
+  const [PVCModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'PersistentVolumeClaim' });
 
   const {
     vcenter,
@@ -55,25 +64,41 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
   };
 
   const onSave = () => {
+    setIsSaving(true);
     const doItAsync = async () => {
       // TODO: a warning based on prometheus metric will apear until next error
       setError('');
 
-      const errorMsg = await persist(t, SecretModel, ConfigMapModel, {
-        vcenter,
-        username,
-        password,
-        datacenter,
-        defaultdatastore,
-        folder,
-      });
+      let errorMsg = await persist(
+        t,
+        { SecretModel, ConfigMapModel },
+        {
+          vcenter,
+          username,
+          password,
+          datacenter,
+          defaultdatastore,
+          folder,
+        },
+      );
 
       if (errorMsg) {
         setError(errorMsg);
+        setIsSaving(false);
         return;
       }
 
-      // TODO: monitor progress and give it try
+      console.log('vSphere configuration persisted well, starting monitoring.');
+
+      errorMsg = await verifyConnection(t, { StorageClassModel, PVCModel }, { defaultdatastore });
+      if (errorMsg) {
+        setError(errorMsg);
+        setIsSaving(false);
+        return;
+      }
+
+      // All good now
+      setIsSaving(true);
     };
 
     doItAsync();
@@ -186,8 +211,14 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
         />
       </FormGroup>
 
-      {!error && health.state === HealthState.WARNING && (
-        <Alert isInline title={health.message} variant={AlertVariant.warning} />
+      {!error && !isSaving && health.state === HealthState.WARNING && (
+        <Alert
+          isInline
+          title={t('vSphere Problem Detector (can be outdated)')}
+          variant={AlertVariant.warning}
+        >
+          {health.message}
+        </Alert>
       )}
       {error && (
         <Alert
@@ -197,9 +228,12 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
           variant={AlertVariant.danger}
         />
       )}
+      {isSaving && (
+        <InProgress text={t('Saving configuration and waiting for a test PVC to get bound')} />
+      )}
 
       <ActionGroup>
-        <Button variant="primary" onClick={onSave}>
+        <Button variant="primary" isDisabled={isSaving} onClick={onSave}>
           Save configuration
         </Button>
         <Button variant="link" isDisabled={!hide} onClick={onCancel}>

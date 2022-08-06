@@ -14,8 +14,13 @@ import { encodeBase64 } from './utils';
 
 export const persist = async (
   t: TFunction,
-  SecretModel: K8sModel,
-  ConfigMapModel: K8sModel,
+  {
+    SecretModel,
+    ConfigMapModel,
+  }: {
+    SecretModel: K8sModel;
+    ConfigMapModel: K8sModel;
+  },
   {
     vcenter,
     username,
