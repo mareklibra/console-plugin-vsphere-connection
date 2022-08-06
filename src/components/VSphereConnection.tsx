@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   ActionGroup,
   Alert,
+  AlertActionLink,
   AlertVariant,
   Button,
   Form,
@@ -14,6 +15,7 @@ import { useTranslation } from '../i18n';
 import { ConfigMap } from '../resources';
 import { ConnectionFormContextProvider, useConnectionFormContext } from './ConnectionFormContext';
 import { initialLoad } from './initialLoad';
+import { persist } from './persist';
 
 type VSphereConnectionProps = {
   hide: () => void;
@@ -28,7 +30,9 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const [SecretModel] = useK8sModel({ group: 'app' /* TODO ??? */, version: 'v1', kind: 'Secret' });
+  const [error, setError] = React.useState<string>();
+  const [SecretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
+  const [ConfigMapModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'ConfigMap' });
 
   const {
     vcenter,
@@ -51,9 +55,31 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
   };
 
   const onSave = () => {
-    console.log('TODO');
+    const doItAsync = async () => {
+      // TODO: a warning based on prometheus metric will apear until next error
+      setError('');
+
+      const errorMsg = await persist(t, SecretModel, ConfigMapModel, {
+        vcenter,
+        username,
+        password,
+        datacenter,
+        defaultdatastore,
+        folder,
+      });
+
+      if (errorMsg) {
+        setError(errorMsg);
+        return;
+      }
+
+      // TODO: monitor progress and give it try
+    };
+
+    doItAsync();
   };
 
+  // initial load
   React.useEffect(() => {
     const doItAsync = async () => {
       if (isLoaded) {
@@ -159,11 +185,19 @@ const VSphereConnectionForm: React.FC<VSphereConnectionProps> = ({
           onChange={setFolder}
         />
       </FormGroup>
-      {health.state === HealthState.WARNING && (
-        <Alert isInline title={t('vSphere Problem Detector')} variant={AlertVariant.warning}>
-          {health.message}
-        </Alert>
+
+      {!error && health.state === HealthState.WARNING && (
+        <Alert isInline title={health.message} variant={AlertVariant.warning} />
       )}
+      {error && (
+        <Alert
+          isInline
+          title={error}
+          actionLinks={<AlertActionLink onClick={onSave}>{t('Retry')}</AlertActionLink>}
+          variant={AlertVariant.danger}
+        />
+      )}
+
       <ActionGroup>
         <Button variant="primary" onClick={onSave}>
           Save configuration

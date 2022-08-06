@@ -7,11 +7,13 @@ export type ConnectionFormContextSetters = {
   setFolder: (v: string) => void;
 };
 
-export type ConnectionFormContextData = {
-  vcenter?: string;
-  username?: string;
-  password?: string;
-  datacenter?: string;
-  defaultdatastore?: string;
-  folder?: string;
-} & ConnectionFormContextSetters;
+export type ConnectionFormContextValues = {
+  vcenter: string;
+  username: string;
+  password: string;
+  datacenter: string;
+  defaultdatastore: string;
+  folder: string;
+};
+
+export type ConnectionFormContextData = ConnectionFormContextValues & ConnectionFormContextSetters;

@@ -57,6 +57,8 @@ export const getVSphereHealth = (
       'Prometheus query - invalid credentials: ',
       getPrometheusMetricValue(prometheusResult, 'InvalidCredentials'),
     );
+    // TODO: Add timestamp to the message
+
     return { state: HealthState.WARNING, message: t('Invalid credentials') };
   }
 
@@ -65,12 +67,14 @@ export const getVSphereHealth = (
       'Prometheus query - synchronization failed: ',
       getPrometheusMetricValue(prometheusResult, t('SyncError')),
     );
+    // TODO: Add timestamp to the message
     return { state: HealthState.WARNING, message: 'Synchronization failed' };
   }
 
   const anyFailingMetric = prometheusResult.find((r) => r.value?.[0]);
   if (anyFailingMetric) {
     console.error('Prometheus query - a failing metric found: ', anyFailingMetric);
+    // TODO: Add timestamp to the message
     return {
       state: HealthState.WARNING,
       message: t('Failing {{reason}}', { reason: anyFailingMetric.metric.reason }),
