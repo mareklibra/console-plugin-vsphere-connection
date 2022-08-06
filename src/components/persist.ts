@@ -40,8 +40,7 @@ export const persist = async (
     [`${vcenter}.password`]: passwordB64,
   };
 
-  const config = `
-[Global]
+  const config = `[Global]
 secret-name = "${VSPHERE_CREDS_SECRET_NAME}"
 secret-namespace = "${VSPHERE_CREDS_SECRET_NAMESPACE}"
 insecure-flag = "1"
