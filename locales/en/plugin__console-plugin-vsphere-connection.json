@@ -18,9 +18,17 @@
   "The vSphere test PVC was not bound in time.": "The vSphere test PVC was not bound in time.",
   "Failed to clean-up - unable to delete test StorageClass {{name}}": "Failed to clean-up - unable to delete test StorageClass {{name}}",
   "Failed to clean-up - unable to delete test PVC {{name}}": "Failed to clean-up - unable to delete test PVC {{name}}",
+  "vCenter": "vCenter",
+  "vCenter address": "vCenter address",
+  "Username": "Username",
+  "Password": "Password",
+  "Datacenter": "Datacenter",
+  "Default data store": "Default data store",
+  "Folder": "Folder",
+  "vSphere connection configuration": "vSphere connection configuration",
+  "Saving configuration and waiting for a test PVC to get bound": "Saving configuration and waiting for a test PVC to get bound",
   "vSphere Problem Detector (can be outdated)": "vSphere Problem Detector (can be outdated)",
   "Retry": "Retry",
-  "Saving configuration and waiting for a test PVC to get bound": "Saving configuration and waiting for a test PVC to get bound",
   "vSphere": "vSphere",
   "vSphere configurations": "vSphere configurations"
 }
