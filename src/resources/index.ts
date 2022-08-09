@@ -5,3 +5,5 @@ export * from './secret';
 export * from './kubeControllerManager';
 export * from './storageClass';
 export * from './persistentVolumeClaim';
+export * from './model';
+export * from './infrastructure';

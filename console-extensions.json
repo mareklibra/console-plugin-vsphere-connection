@@ -8,18 +8,16 @@
  */
 [
   {
-    "type": "console.flag/modelXX",
+    "type": "console.flag",
     "properties": {
-      "flag": "VSPHERE_OPERATOR",
-      "model": {
-        "group": "todo.com",
-        "version": "v1",
-        "kind": "TODO"
-      }
+      "handler": { "$codeRef": "flag.vSphereFlagHandler" }
     }
   },
   {
     "type": "console.dashboards/overview/health/prometheus",
+    "flags": {
+      "required": ["VSPHERECONNECTION"]
+    },
     "properties": {
       "title": "%plugin__console-plugin-vsphere-connection~vSphere%",
       "queries": ["vsphere_sync_errors"],

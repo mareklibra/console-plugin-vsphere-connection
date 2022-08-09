@@ -62,7 +62,8 @@
     "displayName": "Console vSphere Connection plugin",
     "description": "vSphere connection plugin for OpenShift Console",
     "exposedModules": {
-      "vsphereStatus": "./components/ClusterOverview/VSphereStatus"
+      "vsphereStatus": "./components/ClusterOverview/VSphereStatus",
+      "flag": "./flag"
     },
     "dependencies": {
       "@console/pluginAPI": "~4.10.0"
