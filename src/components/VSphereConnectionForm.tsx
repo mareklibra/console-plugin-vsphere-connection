@@ -2,10 +2,13 @@ import * as React from 'react';
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 import { useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 
+import { PopoverHelpButton } from '../PopoverHelpButton';
 import { useTranslation } from '../i18n';
 import { useConnectionFormContext } from './ConnectionFormContext';
 import { initialLoad } from './initialLoad';
 import { VSphereConnectionProps } from './types';
+
+import './VSphereConnectionForm.css';
 
 export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?: string }> = ({
   cloudProviderConfig,
@@ -76,6 +79,20 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     setVcenter,
   ]);
 
+  const folderHelperText = (
+    <>
+      Provide <b>datacenter</b> folder containing VMs of the cluster, example: /
+      <span className="vsphere-connection-form-helper__datacenter">{datacenter}</span>/<b>vm</b>/
+      <b>[MY_VMS_TOP_FOLDER]</b>.
+      <br />
+      <br />
+      The file backing the PersistenVolume will be stored with this prefix under the{' '}
+      <b>/kubevols</b> folder of the{' '}
+      <span className="vsphere-connection-form-helper__datastore">{defaultdatastore}</span>{' '}
+      <b>datastore</b>, mind to have that folder already created in the vSphere.
+    </>
+  );
+
   return (
     <Form id={formId}>
       <FormGroup
@@ -135,7 +152,12 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           onChange={setDefaultdatastore}
         />
       </FormGroup>
-      <FormGroup label={t('Folder')} isRequired fieldId="connection-folder">
+      <FormGroup
+        label={t('Disk name prefix')}
+        labelIcon={<PopoverHelpButton content={folderHelperText} />}
+        isRequired
+        fieldId="connection-folder"
+      >
         <TextInput
           isRequired
           type="text"

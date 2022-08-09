@@ -8,7 +8,6 @@
   "Prometheus query failed.": "Prometheus query failed.",
   "Invalid credentials": "Invalid credentials",
   "Failing {{reason}}": "Failing {{reason}}",
-  "Help": "Help",
   "Failed to patch {{secret}}": "Failed to patch {{secret}}",
   "Failed to load kubecontrollermanager": "Failed to load kubecontrollermanager",
   "Failed to patch kubecontrollermanager": "Failed to patch kubecontrollermanager",
@@ -24,12 +23,13 @@
   "Password": "Password",
   "Datacenter": "Datacenter",
   "Default data store": "Default data store",
-  "Folder": "Folder",
+  "Disk name prefix": "Disk name prefix",
   "vSphere connection configuration": "vSphere connection configuration",
   "Verifying configuration": "Verifying configuration",
   "New configuration might take long to take effect, all nodes need to be updated prior creating a test PVC to get bound. Please wait or watch the vSphere status for changes in several minutes.": "New configuration might take long to take effect, all nodes need to be updated prior creating a test PVC to get bound. Please wait or watch the vSphere status for changes in several minutes.",
   "vSphere Problem Detector (can be outdated)": "vSphere Problem Detector (can be outdated)",
   "Retry": "Retry",
   "vSphere": "vSphere",
-  "vSphere configurations": "vSphere configurations"
+  "vSphere configurations": "vSphere configurations",
+  "Help": "Help"
 }
