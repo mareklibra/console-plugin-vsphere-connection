@@ -6,6 +6,7 @@ import {
   PrometheusValue,
   SubsystemHealth,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { toInteger } from 'lodash';
 
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],
@@ -52,26 +53,22 @@ export const getVSphereHealth = (
     return { state: HealthState.ERROR, message: t('Prometheus query failed.') };
   }
 
-  if (getPrometheusMetricValue(prometheusResult, 'InvalidCredentials')?.[0]) {
-    console.error(
-      'Prometheus query - invalid credentials: ',
-      getPrometheusMetricValue(prometheusResult, 'InvalidCredentials'),
-    );
+  const invCreds = getPrometheusMetricValue(prometheusResult, 'InvalidCredentials');
+  if (toInteger(invCreds?.[1]) > 0) {
+    console.error('Prometheus query - invalid credentials: ', invCreds);
     // TODO: Add timestamp to the message
 
     return { state: HealthState.WARNING, message: t('Invalid credentials') };
   }
 
-  if (getPrometheusMetricValue(prometheusResult, 'SyncError')?.[0]) {
-    console.error(
-      'Prometheus query - synchronization failed: ',
-      getPrometheusMetricValue(prometheusResult, t('SyncError')),
-    );
+  const syncErr = getPrometheusMetricValue(prometheusResult, 'SyncError');
+  if (toInteger(syncErr?.[1])) {
+    console.error('Prometheus query - synchronization failed: ', syncErr);
     // TODO: Add timestamp to the message
     return { state: HealthState.WARNING, message: 'Synchronization failed' };
   }
 
-  const anyFailingMetric = prometheusResult.find((r) => r.value?.[0]);
+  const anyFailingMetric = prometheusResult.find((r) => toInteger(r.value?.[1]) > 0);
   if (anyFailingMetric) {
     console.error('Prometheus query - a failing metric found: ', anyFailingMetric);
     // TODO: Add timestamp to the message
