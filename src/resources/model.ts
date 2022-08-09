@@ -2,11 +2,9 @@ import { K8sModel } from '@openshift-console/dynamic-plugin-sdk';
 
 export const InfrastructureModel: K8sModel = {
   label: 'Infrastructure',
-  // t('public~Infrastructure')
-  labelKey: 'public~Infrastructure',
+  labelKey: 'Infrastructure',
   labelPlural: 'Infrastructures',
-  // t('public~Infrastructures')
-  labelPluralKey: 'public~Infrastructures',
+  labelPluralKey: 'Infrastructures',
   apiVersion: 'v1',
   apiGroup: 'config.openshift.io',
   plural: 'infrastructures',
