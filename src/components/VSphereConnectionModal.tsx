@@ -82,7 +82,10 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
       }
 
       // All good now
-      setIsSaving(true);
+      setIsSaving(false);
+
+      // TODO: Maybe show green success message instead of closing the modal
+      onClose();
     };
 
     doItAsync();

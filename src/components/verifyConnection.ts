@@ -70,7 +70,7 @@ export const verifyConnection = async (
     // Objects created, watch for progress now
     for (let attempt = MAX_RETRY_ATTEMPTS; attempt > 0; attempt--) {
       await delay(DELAY_BEFORE_POLLING_RETRY);
-      console.log('---Polling PVC');
+      console.log('Polling test vSphere Connection PVC');
       try {
         const polledPvc = await k8sGet<PersistentVolumeClaim>({
           model: PVCModel,
@@ -79,6 +79,7 @@ export const verifyConnection = async (
         });
 
         if (polledPvc?.status?.phase === 'Bound') {
+          console.info('vSphere test connection PVC was successfuly bound.');
           // It works! All good.
           // the finally block will do the clean-up
           return undefined;
@@ -91,6 +92,7 @@ export const verifyConnection = async (
     return t('The vSphere test PVC was not bound in time.');
   } finally {
     // Clean-up at any case...
+    console.log('Clean-up after vSphere verifyConnection');
     try {
       await k8sDelete({ model: StorageClassModel, resource: sc });
     } catch (e) {
