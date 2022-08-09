@@ -11,6 +11,9 @@ export const verifyConnection = async (
 ): Promise<string | undefined> => {
   console.info('Calling verifyConnection() of vSphere connection configuration');
 
+  // TODO: Block on having kube-controller-manager done
+  // Without that waiting, we would be using old configuration.
+
   const scIn: StorageClass = {
     kind: 'StorageClass',
     apiVersion: 'storage.k8s.io/v1',

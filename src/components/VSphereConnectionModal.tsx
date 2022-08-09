@@ -110,7 +110,10 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         isSaving ? (
           <InProgress
             key="progress"
-            text={t('Saving configuration and waiting for a test PVC to get bound')}
+            text={t('Verifying configuration')}
+            infoText={t(
+              'New configuration might take long to take effect, all nodes need to be updated prior creating a test PVC to get bound. Please wait or watch the vSphere status for changes in several minutes.',
+            )}
           />
         ) : null,
       ]}
