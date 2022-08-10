@@ -17,6 +17,7 @@ import { verifyConnection } from './verifyConnection';
 import { persist } from './persist';
 import { VSphereConnectionProps } from './types';
 import { VSphereConnectionForm } from './VSphereConnectionForm';
+import { LONG_PERSIST_TIMEOUT } from '../constants';
 
 export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params) => {
   const { t } = useTranslation();
@@ -31,7 +32,8 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   });
   const [PVCModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'PersistentVolumeClaim' });
 
-  const [isSaving, setIsSaving] = React.useState(false);
+  const [isSaving, _setIsSaving] = React.useState(false);
+  const [isPersistLong, setPersistIsLong] = React.useState(false);
   const [error, setError] = React.useState<string>();
 
   const { vcenter, username, password, datacenter, defaultdatastore, folder } =
@@ -39,9 +41,24 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
   const formId = 'vsphere-connection-modal-form';
 
+  const setIsSaving = (value: boolean) => {
+    _setIsSaving(value);
+
+    let timmer;
+    if (value) {
+      // start timmer
+      timmer = setTimeout(() => {
+        setPersistIsLong(true);
+      }, LONG_PERSIST_TIMEOUT);
+    } else {
+      // clear timmer
+      setPersistIsLong(false);
+      clearTimeout(timmer);
+    }
+  };
+
   const onClose = () => {
     // TODO: abort potentially ongoing persistence
-
     setModalOpen(false);
 
     // hide popup
@@ -74,7 +91,14 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
       console.log('vSphere configuration persisted well, starting monitoring.');
 
-      errorMsg = await verifyConnection(t, { StorageClassModel, PVCModel }, { defaultdatastore });
+      // TODO: Should be true for any 2nd or later change to the data
+      const blockOnClusterOperators = true;
+      errorMsg = await verifyConnection(
+        t,
+        { StorageClassModel, PVCModel },
+        { defaultdatastore },
+        blockOnClusterOperators,
+      );
       if (errorMsg) {
         setError(errorMsg);
         setIsSaving(false);
@@ -107,17 +131,33 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         <Button key="cancel" variant="link" onClick={onClose}>
           Cancel
         </Button>,
-        isSaving ? (
-          <InProgress
-            key="progress"
-            text={t('Verifying configuration')}
-            infoText={t(
-              'New configuration might take long to take effect, all nodes need to be updated prior creating a test PVC to get bound. Please wait or watch the vSphere status for changes in several minutes.',
-            )}
-          />
-        ) : null,
+        isSaving ? <InProgress key="progress" text={t('Verifying configuration')} /> : null,
       ]}
     >
+      {isPersistLong && (
+        <Alert
+          isInline
+          title={t('Verifying vSphere connection takes long time')}
+          variant={AlertVariant.info}
+        >
+          {t('Verifying the connection takes longer than expected.')}
+          {t(
+            'It must not be an error, the nodes need to be utomatically updated prior establishing vSphere connection.',
+          )}
+          <br />
+          {t('To monitor progress')}
+          <ul>
+            <li>{t('make sure all control plane nodes are healthy')}</li>
+            <li>
+              {t(
+                'check status of cluster operators to be ready, especially the kube-controller-manager',
+              )}
+            </li>
+            <li>{t('or create a vSphere StorageClass and PVC for it and debug farther')}</li>
+          </ul>
+        </Alert>
+      )}
+
       <VSphereConnectionForm {...params} formId={formId} />
 
       {!error && !isSaving && params.health.state === HealthState.WARNING && (

@@ -27,3 +27,18 @@ export const KubeControllerManagerModel: K8sModel = {
   crd: true,
   abbr: '',
 };
+
+export const ClusterOperatorModel: K8sModel = {
+  label: 'ClusterOperator',
+  labelKey: 'ClusterOperator',
+  labelPlural: 'ClusterOperators',
+  labelPluralKey: 'ClusterOperators',
+  apiVersion: 'v1',
+  apiGroup: 'config.openshift.io',
+  plural: 'clusteroperators',
+  abbr: 'CO',
+  namespaced: false,
+  kind: 'ClusterOperator',
+  id: 'clusteroperator',
+  crd: true,
+};
