@@ -99,6 +99,20 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     <Form id={formId}>
       <FormGroup
         label={t('vCenter')}
+        labelIcon={
+          <PopoverHelpButton
+            content={
+              <>
+                {t(
+                  'Enter the network address the vCenter is running on, it can be either URL or IP. If unsure, you can try to determine the value from the vSphere Web Client address. Example: ',
+                )}
+                <ul>
+                  <li> https://[your_vCenter_address]/ui</li>
+                </ul>
+              </>
+            }
+          />
+        }
         isRequired
         fieldId="connection-vcenter"
         helperText={t('vCenter address')}
@@ -124,7 +138,18 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           onChange={setUsername}
         />
       </FormGroup>
-      <FormGroup label={t('Password')} isRequired fieldId="connection-password">
+      <FormGroup
+        label={t('Password')}
+        labelIcon={
+          <PopoverHelpButton
+            content={t(
+              'The password will be stored in a Secret in the kube-system namespace of this cluster.',
+            )}
+          />
+        }
+        isRequired
+        fieldId="connection-password"
+      >
         <TextInput
           isRequired
           type="password"
@@ -134,7 +159,18 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           onChange={setPassword}
         />
       </FormGroup>
-      <FormGroup label={t('Datacenter')} isRequired fieldId="connection-datacenter">
+      <FormGroup
+        label={t('Datacenter')}
+        labelIcon={
+          <PopoverHelpButton
+            content={t(
+              'The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.',
+            )}
+          />
+        }
+        isRequired
+        fieldId="connection-datacenter"
+      >
         <TextInput
           isRequired
           type="text"
@@ -144,7 +180,24 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           onChange={setDatacenter}
         />
       </FormGroup>
-      <FormGroup label={t('Default data store')} isRequired fieldId="connection-defaultdatastore">
+      <FormGroup
+        label={t('Default data store')}
+        labelIcon={
+          <PopoverHelpButton
+            content={
+              <>
+                {t(
+                  'The name of an existing datastore in the datacenter where the persistent volumes will be stored.',
+                )}
+                <br />
+                {t('Make sure, there is /kubevols folder created in the root of the datastore.')}
+              </>
+            }
+          />
+        }
+        isRequired
+        fieldId="connection-defaultdatastore"
+      >
         <TextInput
           isRequired
           type="text"
