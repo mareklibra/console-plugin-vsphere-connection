@@ -34,7 +34,7 @@
   "Verifying configuration": "Verifying configuration",
   "Verifying vSphere connection takes long time": "Verifying vSphere connection takes long time",
   "Verifying the connection takes longer than expected.": "Verifying the connection takes longer than expected.",
-  "It must not be an error, the nodes need to be utomatically updated prior establishing vSphere connection.": "It must not be an error, the nodes need to be utomatically updated prior establishing vSphere connection.",
+  "It must not be an error, the nodes need to be automatically updated prior establishing vSphere connection.": "It must not be an error, the nodes need to be automatically updated prior establishing vSphere connection.",
   "To monitor progress": "To monitor progress",
   "make sure all control plane nodes are healthy": "make sure all control plane nodes are healthy",
   "check status of cluster operators to be ready, especially the kube-controller-manager": "check status of cluster operators to be ready, especially the kube-controller-manager",

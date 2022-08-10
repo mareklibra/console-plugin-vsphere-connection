@@ -142,7 +142,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         >
           {t('Verifying the connection takes longer than expected.')}
           {t(
-            'It must not be an error, the nodes need to be utomatically updated prior establishing vSphere connection.',
+            'It must not be an error, the nodes need to be automatically updated prior establishing vSphere connection.',
           )}
           <br />
           {t('To monitor progress')}
