@@ -39,7 +39,7 @@
   "double-check the entered configuration is correct": "double-check the entered configuration is correct",
   "make sure all control plane nodes are healthy": "make sure all control plane nodes are healthy",
   "check status of cluster operators to be ready, especially the kube-controller-manager": "check status of cluster operators to be ready, especially the kube-controller-manager",
-  "or create a vSphere StorageClass and PVC for it and debug farther": "or create a vSphere StorageClass and PVC for it and debug farther",
+  "or create a vSphere StorageClass and PVC for it and debug further": "or create a vSphere StorageClass and PVC for it and debug further",
   "vSphere Problem Detector (can be outdated)": "vSphere Problem Detector (can be outdated)",
   "Retry": "Retry",
   "vSphere connection": "vSphere connection",

@@ -154,7 +154,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
                 'check status of cluster operators to be ready, especially the kube-controller-manager',
               )}
             </li>
-            <li>{t('or create a vSphere StorageClass and PVC for it and debug farther')}</li>
+            <li>{t('or create a vSphere StorageClass and PVC for it and debug further')}</li>
           </ul>
         </Alert>
       )}
