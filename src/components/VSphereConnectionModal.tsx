@@ -147,6 +147,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
           <br />
           {t('To monitor progress')}
           <ul>
+            <li>{t('double-check the entered configuration is correct')}</li>
             <li>{t('make sure all control plane nodes are healthy')}</li>
             <li>
               {t(
