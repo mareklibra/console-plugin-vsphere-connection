@@ -19,7 +19,7 @@
       "required": ["VSPHERECONNECTION"]
     },
     "properties": {
-      "title": "%plugin__console-plugin-vsphere-connection~vSphere%",
+      "title": "%plugin__console-plugin-vsphere-connection~vSphere connection%",
       "queries": ["vsphere_sync_errors"],
       "healthHandler": {
         "$codeRef": "vsphereStatus.healthHandler"

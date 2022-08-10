@@ -6,7 +6,7 @@ import { useTranslation as useReactI18NextTranslation } from 'react-i18next';
 // TODO: We should make the custom i18next JSON lexer available to plugins so
 // that they do not need this file.
 
-// t('plugin__console-plugin-vsphere-connection~vSphere')
+// t('plugin__console-plugin-vsphere-connection~vSphere connection')
 // t('plugin__console-plugin-vsphere-connection~vSphere configurations')
 
 export function useTranslation() {
