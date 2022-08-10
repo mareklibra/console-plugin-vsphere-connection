@@ -80,17 +80,19 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
   ]);
 
   const folderHelperText = (
-    <>
-      Provide <b>datacenter</b> folder containing VMs of the cluster, example: /
-      <span className="vsphere-connection-form-helper__datacenter">{datacenter}</span>/<b>vm</b>/
-      <b>[MY_VMS_TOP_FOLDER]</b>.
-      <br />
-      <br />
-      The file backing the PersistenVolume will be stored with this prefix under the{' '}
-      <b>/kubevols</b> folder of the{' '}
-      <span className="vsphere-connection-form-helper__datastore">{defaultdatastore}</span>{' '}
-      <b>datastore</b>, mind to have that folder already created in the vSphere.
-    </>
+    <ul>
+      <li>
+        Provide <b>datacenter</b> folder which contains VMs of the cluster, example: /
+        <span className="vsphere-connection-form-helper__datacenter">{datacenter}</span>/<b>vm</b>/
+        <b>[MY_VMS_TOP_FOLDER]</b>.
+      </li>
+      <li>
+        The file backing the PersistenVolume will be stored with this prefix under the{' '}
+        <b>/kubevols</b> folder of the{' '}
+        <span className="vsphere-connection-form-helper__datastore">{defaultdatastore}</span>{' '}
+        <b>datastore</b>, mind to have that folder already created in the vSphere.
+      </li>
+    </ul>
   );
 
   return (
@@ -153,7 +155,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
         />
       </FormGroup>
       <FormGroup
-        label={t('Disk name prefix')}
+        label={t('Virtual Machine Folder')}
         labelIcon={<PopoverHelpButton content={folderHelperText} />}
         isRequired
         fieldId="connection-folder"

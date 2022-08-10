@@ -107,15 +107,15 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         <Button key="cancel" variant="link" onClick={onClose}>
           Cancel
         </Button>,
-        isSaving ? (
-          <InProgress
-            key="progress"
-            text={t('Verifying configuration')}
-            infoText={t(
-              'New configuration might take long to take effect, all nodes need to be updated prior creating a test PVC to get bound. Please wait or watch the vSphere status for changes in several minutes.',
-            )}
-          />
-        ) : null,
+        /*isSaving  ? (*/
+        <InProgress
+          key="progress"
+          text={t('Verifying configuration')}
+          infoText={t(
+            'New configuration might take long to take effect, all nodes need to be updated prior creating a test PVC to get bound. Please wait or watch the vSphere status for changes in several minutes.',
+          )}
+        />,
+        // ) : null,
       ]}
     >
       <VSphereConnectionForm {...params} formId={formId} />
