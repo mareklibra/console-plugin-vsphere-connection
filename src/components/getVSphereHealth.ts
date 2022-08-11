@@ -23,9 +23,10 @@ export const getVSphereHealth = (
   }
 
   if (configMapResult.loadError) {
+    // This should not happen if the vSphere FLAG is true
     return {
       state: HealthState.WARNING,
-      message: t('Failed to load vSphere connection config map.'),
+      message: t('Missing the vSphere config map.'),
     };
   }
 
@@ -54,9 +55,17 @@ export const getVSphereHealth = (
   }
 
   const invCreds = getPrometheusMetricValue(prometheusResult, 'InvalidCredentials');
-  if (toInteger(invCreds?.[1]) > 0) {
+
+  // console.log(
+  //   '--- invCreds[0]: ',
+  //   invCreds?.[0],
+  //   ', formatted: ',
+  //   new Date(invCreds?.[0] || 0).toLocaleDateString(),
+  // );
+
+  if (invCreds?.[0] && toInteger(invCreds?.[1]) > 0) {
     console.error('Prometheus query - invalid credentials: ', invCreds);
-    // TODO: Add timestamp to the message
+    // TODO: Add timestamp to the message but where to get it from?? It's not invCreds[0]
 
     return { state: HealthState.WARNING, message: t('Invalid credentials') };
   }

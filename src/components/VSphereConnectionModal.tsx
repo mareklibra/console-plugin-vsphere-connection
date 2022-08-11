@@ -36,8 +36,15 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   const [isPersistLong, setPersistIsLong] = React.useState(false);
   const [error, setError] = React.useState<string>();
 
-  const { vcenter, username, password, datacenter, defaultdatastore, folder } =
-    useConnectionFormContext();
+  const {
+    vcenter,
+    username,
+    password,
+    datacenter,
+    defaultdatastore,
+    folder,
+    isBrandNewConfiguration,
+  } = useConnectionFormContext();
 
   const formId = 'vsphere-connection-modal-form';
 
@@ -80,6 +87,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
           datacenter,
           defaultdatastore,
           folder,
+          isBrandNewConfiguration,
         },
       );
 
@@ -91,8 +99,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
       console.log('vSphere configuration persisted well, starting monitoring.');
 
-      // TODO: Should be true for any 2nd or later change to the data
-      const blockOnClusterOperators = true;
+      const blockOnClusterOperators = !isBrandNewConfiguration;
       errorMsg = await verifyConnection(
         t,
         { StorageClassModel, PVCModel },
@@ -131,7 +138,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         <Button key="cancel" variant="link" onClick={onClose}>
           Cancel
         </Button>,
-        isSaving ? <InProgress key="progress" text={t('Verifying configuration')} /> : null,
+        isSaving ? <InProgress key="progress" text={t('Verifying saved configuration')} /> : null,
       ]}
     >
       {isPersistLong && (

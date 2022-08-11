@@ -12,3 +12,11 @@ export type ClusterOperator = K8sResourceCommon & {
     conditions: StatusCondition[];
   };
 };
+
+export type BooleanString = 'True' | 'False';
+
+export type OperatorStateType = {
+  progressing?: BooleanString;
+  degraded?: BooleanString;
+  available?: BooleanString;
+};

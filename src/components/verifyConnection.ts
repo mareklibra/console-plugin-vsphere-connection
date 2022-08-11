@@ -6,25 +6,38 @@ import {
   PersistentVolumeClaim,
   StorageClass,
   getCondition,
+  OperatorStateType,
 } from '../resources';
 import {
   DELAY_BEFORE_POLLING_RETRY,
-  DELAY_CLUSTER_OPERATOR_RECONCILIATION_STARTS,
   MAX_RETRY_ATTEMPTS,
   MAX_RETRY_ATTEMPTS_CO,
+  MAX_RETRY_ATTEMPTS_CO_QUICK,
 } from '../constants';
 import { delay } from './utils';
 
-const waitForClusterOperator = async (name: string): Promise<boolean> => {
+const waitForClusterOperator = async (
+  name: string,
+  expectedState: OperatorStateType = {
+    /* An undefined value would mean: I don't care */
+    progressing: 'False',
+    degraded: 'False',
+    available: 'True',
+  },
+  maxPollingAttempts: number = MAX_RETRY_ATTEMPTS_CO,
+): Promise<boolean> => {
   console.info('waitForClusterOperator started for: ', name);
-  for (let counter = 0; counter < MAX_RETRY_ATTEMPTS_CO; counter++) {
+  for (let counter = 0; counter < maxPollingAttempts; counter++) {
     try {
       console.log('Querying co: ', name);
       const operator = await k8sGet<ClusterOperator>({ model: ClusterOperatorModel, name });
       if (
-        getCondition(operator, 'Progressing')?.status === 'False' &&
-        getCondition(operator, 'Degraded')?.status === 'False' &&
-        getCondition(operator, 'Available')?.status === 'True'
+        (!expectedState.progressing ||
+          getCondition(operator, 'Progressing')?.status === expectedState.progressing) &&
+        (!expectedState.degraded ||
+          getCondition(operator, 'Degraded')?.status === expectedState.degraded) &&
+        (!expectedState.available ||
+          getCondition(operator, 'Available')?.status === expectedState.available)
       ) {
         // all good
         return true;
@@ -50,12 +63,24 @@ export const verifyConnection = async (
 
   // In a happy flow after clean installation, no waiting for the cluster operator is needed
   if (blockOnClusterOperators) {
-    // TODO: following waiting should be conditional instead of hardcoded delay
     // Give the kube-controller-manager time to start reconciliation
-    await delay(DELAY_CLUSTER_OPERATOR_RECONCILIATION_STARTS);
+    console.log('Waiting for kube-controller-manager to start updating nodes');
+    if (
+      !(await waitForClusterOperator('kube-controller-manager', {
+        progressing: 'True' /* other statuses are not important here*/,
+      }),
+      MAX_RETRY_ATTEMPTS_CO_QUICK)
+    ) {
+      console.info(
+        'The kube-controller-manager reconciliation did not start on time. It is needed to get te new vSphere configuration updated before using it.',
+      );
 
-    // Otherwise block on having kube-controller-manager done.
+      // do not return, it must not be an error - i.e. no significant change is done to reconcile -- TODO: verify that
+    }
+
+    // Block on having kube-controller-manager done.
     // Without that waiting, we would be using old configuration.
+    console.log('Waiting on kube-controller-manager to finish node updates.');
     if (!(await waitForClusterOperator('kube-controller-manager'))) {
       return t(
         "The kube-controller-manager did not reconcile on time, it's a prerequisite for having the vSphere connection established.",

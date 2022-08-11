@@ -19,11 +19,21 @@ export const initialLoad = async (
 
   const keyValues = parseKeyValue(config);
 
-  const server = keyValues.server;
+  const server = keyValues.server || '';
+  const dc = keyValues.datacenter || '';
+  const ds = keyValues['default-datastore'] || '';
+  const folder = keyValues.folder;
   setters.setVcenter(server);
-  setters.setDatacenter(keyValues.datacenter);
-  setters.setDefaultdatastore(keyValues['default-datastore']);
-  setters.setFolder(keyValues.folder);
+  setters.setDatacenter(dc);
+  setters.setDefaultdatastore(ds);
+  setters.setFolder(folder);
+  // Stupid heuristic based on having placeholders-only. So far they are all in capital letters
+  setters.setBrandNewConfiguration(
+    server.toUpperCase() === server &&
+      dc.toUpperCase() === dc &&
+      ds.toUpperCase() === ds &&
+      folder.toUpperCase() === folder,
+  );
 
   // query Secret
   if (!keyValues['secret-name'] || !keyValues['secret-namespace']) {
