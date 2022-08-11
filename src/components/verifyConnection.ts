@@ -15,9 +15,11 @@ import {
   MAX_RETRY_ATTEMPTS_CO_QUICK,
 } from '../constants';
 import { delay } from './utils';
+import React from 'react';
 
 const waitForClusterOperator = async (
   name: string,
+  abortSignal: React.MutableRefObject<boolean>,
   expectedState: OperatorStateType = {
     /* An undefined value would mean: I don't care */
     progressing: 'False',
@@ -47,6 +49,11 @@ const waitForClusterOperator = async (
       // do not report, keep trying
     }
 
+    if (abortSignal.current) {
+      console.log('waitForClusterOperator received abort signal');
+      return false;
+    }
+
     await delay(DELAY_BEFORE_POLLING_RETRY);
   }
 
@@ -58,15 +65,15 @@ export const verifyConnection = async (
   { StorageClassModel, PVCModel }: { StorageClassModel: K8sModel; PVCModel: K8sModel },
   { defaultdatastore }: { defaultdatastore: string },
   blockOnClusterOperators: boolean,
+  abortVerification: React.MutableRefObject<boolean>,
 ): Promise<string | undefined> => {
   console.info('Calling verifyConnection() of vSphere connection configuration');
 
   // In a happy flow after clean installation, no waiting for the cluster operator is needed
   if (blockOnClusterOperators) {
     // Give the kube-controller-manager time to start reconciliation
-    console.log('Waiting for kube-controller-manager to start updating nodes');
     if (
-      !(await waitForClusterOperator('kube-controller-manager', {
+      !(await waitForClusterOperator('kube-controller-manager', abortVerification, {
         progressing: 'True' /* other statuses are not important here*/,
       }),
       MAX_RETRY_ATTEMPTS_CO_QUICK)
@@ -81,11 +88,15 @@ export const verifyConnection = async (
     // Block on having kube-controller-manager done.
     // Without that waiting, we would be using old configuration.
     console.log('Waiting on kube-controller-manager to finish node updates.');
-    if (!(await waitForClusterOperator('kube-controller-manager'))) {
+    if (!(await waitForClusterOperator('kube-controller-manager', abortVerification))) {
       return t(
         "The kube-controller-manager did not reconcile on time, it's a prerequisite for having the vSphere connection established.",
       );
     }
+  }
+
+  if (abortVerification.current) {
+    return t('Aborted');
   }
 
   const scIn: StorageClass = {
@@ -146,7 +157,11 @@ export const verifyConnection = async (
 
     // Objects created, watch for progress now
     for (let attempt = MAX_RETRY_ATTEMPTS; attempt > 0; attempt--) {
+      if (abortVerification.current) {
+        return t('Aborted');
+      }
       await delay(DELAY_BEFORE_POLLING_RETRY);
+
       console.log('Polling test vSphere Connection PVC');
       try {
         const polledPvc = await k8sGet<PersistentVolumeClaim>({

@@ -35,6 +35,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   const [isSaving, _setIsSaving] = React.useState(false);
   const [isPersistLong, setPersistIsLong] = React.useState(false);
   const [error, setError] = React.useState<string>();
+  const abortVerification = React.useRef<boolean>(false);
 
   const {
     vcenter,
@@ -65,7 +66,9 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   };
 
   const onClose = () => {
-    // TODO: abort potentially ongoing persistence
+    // abort potentially ongoing persistence
+    abortVerification.current = true;
+
     setModalOpen(false);
 
     // hide popup
@@ -99,12 +102,14 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
       console.log('vSphere configuration persisted well, starting monitoring.');
 
+      abortVerification.current = false;
       const blockOnClusterOperators = !isBrandNewConfiguration;
       errorMsg = await verifyConnection(
         t,
         { StorageClassModel, PVCModel },
         { defaultdatastore },
         blockOnClusterOperators,
+        abortVerification,
       );
       if (errorMsg) {
         setError(errorMsg);
