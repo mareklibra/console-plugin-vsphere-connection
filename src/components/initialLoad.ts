@@ -4,6 +4,27 @@ import { ConfigMap, Secret } from '../resources';
 import { ConnectionFormContextSetters } from './types';
 import { decodeBase64, parseKeyValue } from './utils';
 
+export const getIsBrandNewConfiguration = (cloudProviderConfig: ConfigMap) => {
+  const config = cloudProviderConfig.data?.config;
+  if (!config) {
+    return false;
+  }
+
+  const keyValues = parseKeyValue(config);
+  const server = keyValues.server || 'x';
+  const dc = keyValues.datacenter || 'x';
+  const ds = keyValues['default-datastore'] || 'x';
+  const folder = keyValues.folder || 'x';
+
+  // Stupid heuristic based on having placeholders-only. So far they are all in capital letters
+  return (
+    server.toUpperCase() === server &&
+    dc.toUpperCase() === dc &&
+    ds.toUpperCase() === ds &&
+    folder.toUpperCase() === folder
+  );
+};
+
 export const initialLoad = async (
   setters: ConnectionFormContextSetters,
   SecretModel: K8sModel,
@@ -27,13 +48,7 @@ export const initialLoad = async (
   setters.setDatacenter(dc);
   setters.setDefaultdatastore(ds);
   setters.setFolder(folder);
-  // Stupid heuristic based on having placeholders-only. So far they are all in capital letters
-  setters.setBrandNewConfiguration(
-    server.toUpperCase() === server &&
-      dc.toUpperCase() === dc &&
-      ds.toUpperCase() === ds &&
-      folder.toUpperCase() === folder,
-  );
+  setters.setBrandNewConfiguration(getIsBrandNewConfiguration(cloudProviderConfig));
 
   // query Secret
   if (!keyValues['secret-name'] || !keyValues['secret-namespace']) {

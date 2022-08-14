@@ -7,6 +7,8 @@ import {
   SubsystemHealth,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { toInteger } from 'lodash';
+import { getIsBrandNewConfiguration } from './initialLoad';
+import { ConfigMap } from 'src/resources';
 
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],
@@ -32,6 +34,14 @@ export const getVSphereHealth = (
 
   if (!configMapResult.loaded) {
     return { state: HealthState.LOADING };
+  }
+
+  const cloudProviderConfig = configMapResult.data as ConfigMap | undefined;
+  if (!cloudProviderConfig || getIsBrandNewConfiguration(cloudProviderConfig)) {
+    return {
+      state: HealthState.WARNING,
+      message: t('Not configured yet'),
+    };
   }
 
   // by vSphere Problem Detector

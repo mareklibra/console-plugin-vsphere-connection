@@ -21,11 +21,11 @@ import './VSphereStatus.css';
 // https://issues.redhat.com/browse/MGMT-9085
 // https://access.redhat.com/solutions/6677901
 
-const VSphereStatus: React.FC<PrometheusHealthPopupProps & { hide: () => void }> = ({
-  hide,
-  responses,
-  k8sResult,
-}) => {
+const VSphereStatus: React.FC<
+  PrometheusHealthPopupProps /* dummy placeholder, remove this comment later */ & {
+    hide: () => void; // <-- do not merge, being added to the SDK
+  }
+> = ({ hide, responses, k8sResult }) => {
   const { t } = useTranslation();
   const health = getVSphereHealth(t, responses, k8sResult);
 
@@ -63,7 +63,21 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps & { hide: () => void }>
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, _skip, additionalResource) => {
-  return { state: getVSphereHealth(undefined, responses, additionalResource).state };
+  const health = getVSphereHealth(undefined /* TODO: Translate */, responses, additionalResource);
+  const state = health.state;
+
+  let message: string | undefined = undefined;
+  switch (state) {
+    case HealthState.OK:
+      message = 'Problem detection can be delayed';
+      break;
+    case HealthState.WARNING:
+    case HealthState.PROGRESS:
+      // pregress is recently not used, it would require making this healthHandler asynchronous to load more data
+      message = health.message;
+      break;
+  }
+  return { state, message };
 };
 
 export default VSphereStatus;
