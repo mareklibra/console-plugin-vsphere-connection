@@ -27,7 +27,7 @@
   "Password": "Password",
   "The password will be stored in a Secret in the kube-system namespace of this cluster.": "The password will be stored in a Secret in the kube-system namespace of this cluster.",
   "Datacenter": "Datacenter",
-  "The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.": "The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.",
+  "The name of an existing datastore in the the datacenter where the persistent volumes will be stored. Make sure there is a /kubevols folder created in the root of the datastore.": "The name of an existing datastore in the the datacenter where the persistent volumes will be stored. Make sure there is a /kubevols folder created in the root of the datastore.",
   "Default data store": "Default data store",
   "The name of an existing datastore in the datacenter where the persistent volumes will be stored.": "The name of an existing datastore in the datacenter where the persistent volumes will be stored.",
   "Make sure, there is /kubevols folder created in the root of the datastore.": "Make sure, there is /kubevols folder created in the root of the datastore.",

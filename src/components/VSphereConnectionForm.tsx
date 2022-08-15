@@ -167,7 +167,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
         labelIcon={
           <PopoverHelpButton
             content={t(
-              'The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.',
+              'The name of an existing datastore in the the datacenter where the persistent volumes will be stored. Make sure there is a /kubevols folder created in the root of the datastore.',
             )}
           />
         }
