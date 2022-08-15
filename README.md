@@ -6,16 +6,16 @@ Dynamic plugin for the OpenShift console which introduces capability to add vSph
 
 ### Prerequisites
 
-- [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift) 4.11+
-- TODO: vSphere operator
+- [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift) **4.12+** on the vSphere platform, i.e. deployed via SaaS [cloud.redhat.com](https://cloud.redhat.com/)
 
 ### Deployment
 
 ```
-# TODO: Add intructions for deployment
 # Note: This project is WIP, distribution model will be clarified later
 
-# check if a plugins field is specified
+# TODO: Add intructions for deployment
+
+# check if the plugins field is specified
 $ oc get consoles.operator.openshift.io cluster --output=jsonpath="{.spec.plugins}"
 
 # if not, then run the following to enable the plugin
