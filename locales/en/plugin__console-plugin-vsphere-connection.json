@@ -21,7 +21,7 @@
   "Failed to clean-up - unable to delete test StorageClass {{name}}": "Failed to clean-up - unable to delete test StorageClass {{name}}",
   "Failed to clean-up - unable to delete test PVC {{name}}": "Failed to clean-up - unable to delete test PVC {{name}}",
   "vCenter": "vCenter",
-  "Enter the network address the vCenter is running on, it can be either URL or IP. If unsure, you can try to determine the value from the vSphere Web Client address. Example: ": "Enter the network address the vCenter is running on, it can be either URL or IP. If unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
+  "Enter the network address the vCenter is running on. It can either be URL or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ": "Enter the network address the vCenter is running on. It can either be URL or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
   "vCenter address": "vCenter address",
   "Username": "Username",
   "Password": "Password",

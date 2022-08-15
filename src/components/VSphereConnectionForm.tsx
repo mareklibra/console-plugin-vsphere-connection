@@ -73,6 +73,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     SecretModel,
     cloudProviderConfig,
     isLoaded,
+    setBrandNewConfiguration,
     setDatacenter,
     setDefaultdatastore,
     setFolder,
@@ -106,7 +107,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
             content={
               <>
                 {t(
-                  'Enter the network address the vCenter is running on, it can be either URL or IP. If unsure, you can try to determine the value from the vSphere Web Client address. Example: ',
+                  "Enter the network address the vCenter is running on. It can either be URL or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
                 )}
                 <ul>
                   <li> https://[your_vCenter_address]/ui</li>
