@@ -60,7 +60,8 @@ const waitForClusterOperator = async (
   return false;
 };
 
-export const verifyConnection = async (
+// This code is recently not used, replaced by showing a message instructing to wait & check operators
+export const XverifyConnection = async (
   t: TFunction,
   { StorageClassModel, PVCModel }: { StorageClassModel: K8sModel; PVCModel: K8sModel },
   { defaultdatastore }: { defaultdatastore: string },

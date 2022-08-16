@@ -12,7 +12,6 @@ export const ConnectionFormContextProvider: React.FC<{
   const [datacenter, setDatacenter] = React.useState<string>('');
   const [defaultdatastore, setDefaultdatastore] = React.useState<string>('');
   const [folder, setFolder] = React.useState<string>('');
-  const [isBrandNewConfiguration, setBrandNewConfiguration] = React.useState<boolean>(false);
 
   const value = React.useMemo(
     (): ConnectionFormContextData => ({
@@ -33,11 +32,8 @@ export const ConnectionFormContextProvider: React.FC<{
 
       folder,
       setFolder,
-
-      isBrandNewConfiguration,
-      setBrandNewConfiguration,
     }),
-    [datacenter, defaultdatastore, folder, isBrandNewConfiguration, password, username, vcenter],
+    [datacenter, defaultdatastore, folder, password, username, vcenter],
   );
 
   return <ConnectionFormContext.Provider value={value}>{children}</ConnectionFormContext.Provider>;

@@ -6,6 +6,8 @@ import {
   Alert,
   AlertVariant,
   AlertActionLink,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
 
 import { HealthState, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
@@ -13,11 +15,10 @@ import { HealthState, useK8sModel } from '@openshift-console/dynamic-plugin-sdk'
 import { useConnectionFormContext } from './ConnectionFormContext';
 import { InProgress } from './InProgress';
 import { useTranslation } from '../i18n';
-import { verifyConnection } from './verifyConnection';
 import { persist } from './persist';
 import { VSphereConnectionProps } from './types';
 import { VSphereConnectionForm } from './VSphereConnectionForm';
-import { LONG_PERSIST_TIMEOUT } from '../constants';
+import { VSphereOperatorStatuses } from './VSphereOperatorStatuses';
 
 export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params) => {
   const { t } = useTranslation();
@@ -25,17 +26,17 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
   const [SecretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
   const [ConfigMapModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'ConfigMap' });
-  const [StorageClassModel] = useK8sModel({
-    group: 'storage.k8s.io',
-    version: 'v1',
-    kind: 'StorageClass',
-  });
-  const [PVCModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'PersistentVolumeClaim' });
+  // const [StorageClassModel] = useK8sModel({
+  //   group: 'storage.k8s.io',
+  //   version: 'v1',
+  //   kind: 'StorageClass',
+  // });
+  // const [PVCModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'PersistentVolumeClaim' });
 
-  const [isSaving, _setIsSaving] = React.useState(false);
-  const [isPersistLong, setPersistIsLong] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
+  // const [isPersistLong, setPersistIsLong] = React.useState(false);
   const [error, setError] = React.useState<string>();
-  const abortVerification = React.useRef<boolean>(false);
+  // const abortVerification = React.useRef<boolean>(false);
 
   const {
     vcenter,
@@ -44,30 +45,30 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     datacenter,
     defaultdatastore,
     folder,
-    isBrandNewConfiguration,
+    // isBrandNewConfiguration,
   } = useConnectionFormContext();
 
   const formId = 'vsphere-connection-modal-form';
 
-  const setIsSaving = (value: boolean) => {
-    _setIsSaving(value);
+  // const setIsSaving = (value: boolean) => {
+  //   _setIsSaving(value);
 
-    let timmer;
-    if (value) {
-      // start timmer
-      timmer = setTimeout(() => {
-        setPersistIsLong(true);
-      }, LONG_PERSIST_TIMEOUT);
-    } else {
-      // clear timmer
-      setPersistIsLong(false);
-      clearTimeout(timmer);
-    }
-  };
+  //   let timmer;
+  //   if (value) {
+  //     // start timmer
+  //     timmer = setTimeout(() => {
+  //       setPersistIsLong(true);
+  //     }, LONG_PERSIST_TIMEOUT);
+  //   } else {
+  //     // clear timmer
+  //     setPersistIsLong(false);
+  //     clearTimeout(timmer);
+  //   }
+  // };
 
   const onClose = () => {
     // abort potentially ongoing persistence
-    abortVerification.current = true;
+    // abortVerification.current = true;
 
     setModalOpen(false);
 
@@ -80,7 +81,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     const doItAsync = async () => {
       setError('');
 
-      let errorMsg = await persist(
+      const errorMsg = await persist(
         t,
         { SecretModel, ConfigMapModel },
         {
@@ -90,7 +91,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
           datacenter,
           defaultdatastore,
           folder,
-          isBrandNewConfiguration,
+          // isBrandNewConfiguration,
         },
       );
 
@@ -100,22 +101,22 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         return;
       }
 
-      console.log('vSphere configuration persisted well, starting monitoring.');
+      console.log('vSphere configuration persisted well.');
 
-      abortVerification.current = false;
-      const blockOnClusterOperators = !isBrandNewConfiguration;
-      errorMsg = await verifyConnection(
-        t,
-        { StorageClassModel, PVCModel },
-        { defaultdatastore },
-        blockOnClusterOperators,
-        abortVerification,
-      );
-      if (errorMsg) {
-        setError(errorMsg);
-        setIsSaving(false);
-        return;
-      }
+      // abortVerification.current = false;
+      // const blockOnClusterOperators = !isBrandNewConfiguration;
+      // errorMsg = await verifyConnection(
+      //   t,
+      //   { StorageClassModel, PVCModel },
+      //   { defaultdatastore },
+      //   blockOnClusterOperators,
+      //   abortVerification,
+      // );
+      // if (errorMsg) {
+      //   setError(errorMsg);
+      //   setIsSaving(false);
+      //   return;
+      // }
 
       // All good now
       setIsSaving(false);
@@ -143,10 +144,10 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         <Button key="cancel" variant="link" onClick={onClose}>
           Cancel
         </Button>,
-        isSaving ? <InProgress key="progress" text={t('Verifying saved configuration')} /> : null,
+        isSaving ? <InProgress key="progress" text={t('Saving...')} /> : null,
       ]}
     >
-      {isPersistLong && (
+      {/* {isPersistLong && (
         <Alert
           isInline
           title={t('Verifying vSphere connection takes long time')}
@@ -169,27 +170,35 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
             <li>{t('or create a vSphere StorageClass and PVC for it and debug further')}</li>
           </ul>
         </Alert>
-      )}
+      )} */}
 
-      <VSphereConnectionForm {...params} formId={formId} />
-
-      {!error && !isSaving && params.health.state === HealthState.WARNING && (
-        <Alert
-          isInline
-          title={t('vSphere Problem Detector (can be outdated)')}
-          variant={AlertVariant.warning}
-        >
-          {params.health.message}
-        </Alert>
-      )}
-      {error && (
-        <Alert
-          isInline
-          title={error}
-          actionLinks={<AlertActionLink onClick={onSave}>{t('Retry')}</AlertActionLink>}
-          variant={AlertVariant.danger}
-        />
-      )}
+      <Stack>
+        <StackItem>
+          {!error && !isSaving && params.health.state === HealthState.WARNING && (
+            <Alert
+              isInline
+              title={t('vSphere Problem Detector (can be outdated)')}
+              variant={AlertVariant.warning}
+            >
+              {params.health.message}
+            </Alert>
+          )}
+          {error && (
+            <Alert
+              isInline
+              title={error}
+              actionLinks={<AlertActionLink onClick={onSave}>{t('Retry')}</AlertActionLink>}
+              variant={AlertVariant.danger}
+            />
+          )}
+        </StackItem>
+        <StackItem>
+          <VSphereConnectionForm {...params} formId={formId} />
+        </StackItem>
+        <StackItem>
+          <VSphereOperatorStatuses />
+        </StackItem>
+      </Stack>
     </Modal>
   );
 };

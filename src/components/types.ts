@@ -8,8 +8,6 @@ export type ConnectionFormContextSetters = {
   setDatacenter: (v: string) => void;
   setDefaultdatastore: (v: string) => void;
   setFolder: (v: string) => void;
-
-  setBrandNewConfiguration: (v: boolean) => void;
 };
 
 export type ConnectionFormContextValues = {
@@ -19,8 +17,6 @@ export type ConnectionFormContextValues = {
   datacenter: string;
   defaultdatastore: string;
   folder: string;
-
-  isBrandNewConfiguration: boolean;
 };
 
 export type ConnectionFormContextData = ConnectionFormContextValues & ConnectionFormContextSetters;

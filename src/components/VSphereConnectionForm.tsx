@@ -33,7 +33,6 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     setDatacenter,
     setDefaultdatastore,
     setFolder,
-    setBrandNewConfiguration,
   } = useConnectionFormContext();
 
   React.useEffect(() => {
@@ -61,7 +60,6 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
           setDatacenter,
           setDefaultdatastore,
           setFolder,
-          setBrandNewConfiguration,
         },
         SecretModel,
         cloudProviderConfig,
@@ -73,7 +71,6 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     SecretModel,
     cloudProviderConfig,
     isLoaded,
-    setBrandNewConfiguration,
     setDatacenter,
     setDefaultdatastore,
     setFolder,
