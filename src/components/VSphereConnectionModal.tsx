@@ -20,56 +20,24 @@ import { VSphereConnectionProps } from './types';
 import { VSphereConnectionForm } from './VSphereConnectionForm';
 import { VSphereOperatorStatuses } from './VSphereOperatorStatuses';
 
+import './VSphereConnectionModal.css';
+
 export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params) => {
   const { t } = useTranslation();
   const [isModalOpen, setModalOpen] = React.useState(true);
 
   const [SecretModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'Secret' });
   const [ConfigMapModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'ConfigMap' });
-  // const [StorageClassModel] = useK8sModel({
-  //   group: 'storage.k8s.io',
-  //   version: 'v1',
-  //   kind: 'StorageClass',
-  // });
-  // const [PVCModel] = useK8sModel({ group: 'app', version: 'v1', kind: 'PersistentVolumeClaim' });
 
   const [isSaving, setIsSaving] = React.useState(false);
-  // const [isPersistLong, setPersistIsLong] = React.useState(false);
   const [error, setError] = React.useState<string>();
-  // const abortVerification = React.useRef<boolean>(false);
 
-  const {
-    vcenter,
-    username,
-    password,
-    datacenter,
-    defaultdatastore,
-    folder,
-    // isBrandNewConfiguration,
-  } = useConnectionFormContext();
+  const { vcenter, username, password, datacenter, defaultdatastore, folder } =
+    useConnectionFormContext();
 
   const formId = 'vsphere-connection-modal-form';
 
-  // const setIsSaving = (value: boolean) => {
-  //   _setIsSaving(value);
-
-  //   let timmer;
-  //   if (value) {
-  //     // start timmer
-  //     timmer = setTimeout(() => {
-  //       setPersistIsLong(true);
-  //     }, LONG_PERSIST_TIMEOUT);
-  //   } else {
-  //     // clear timmer
-  //     setPersistIsLong(false);
-  //     clearTimeout(timmer);
-  //   }
-  // };
-
   const onClose = () => {
-    // abort potentially ongoing persistence
-    // abortVerification.current = true;
-
     setModalOpen(false);
 
     // hide popup
@@ -91,7 +59,6 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
           datacenter,
           defaultdatastore,
           folder,
-          // isBrandNewConfiguration,
         },
       );
 
@@ -103,26 +70,10 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
 
       console.log('vSphere configuration persisted well.');
 
-      // abortVerification.current = false;
-      // const blockOnClusterOperators = !isBrandNewConfiguration;
-      // errorMsg = await verifyConnection(
-      //   t,
-      //   { StorageClassModel, PVCModel },
-      //   { defaultdatastore },
-      //   blockOnClusterOperators,
-      //   abortVerification,
-      // );
-      // if (errorMsg) {
-      //   setError(errorMsg);
-      //   setIsSaving(false);
-      //   return;
-      // }
-
       // All good now
       setIsSaving(false);
 
-      // TODO: Maybe show green success message instead of closing the modal
-      onClose();
+      // onClose();
     };
 
     doItAsync();
@@ -162,24 +113,28 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     );
   }
 
+  const footer = (
+    <>
+      {isSaving ? <InProgress key="progress" text={t('Saving...')} /> : null}
+      <Button key="cancel" variant="link" onClick={onClose}>
+        Cancel
+      </Button>
+      <Button key="save" variant="primary" isDisabled={isSaving} onClick={onSave}>
+        Save configuration
+      </Button>
+    </>
+  );
   return (
     // @ts-expect-error: TODO: Fix TypeScript for ReactPortal
     <Modal
-      variant={ModalVariant.small}
+      className="vsphere-connection-modal"
+      variant={ModalVariant.medium}
       position="top"
       title={t('vSphere connection configuration')}
       // description=""
       isOpen={isModalOpen}
       onClose={onClose}
-      actions={[
-        <Button key="save" variant="primary" isDisabled={isSaving} onClick={onSave}>
-          Save configuration
-        </Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>
-          Cancel
-        </Button>,
-        isSaving ? <InProgress key="progress" text={t('Saving...')} /> : null,
-      ]}
+      footer={footer}
     >
       <Stack hasGutter>
         <StackItem>
