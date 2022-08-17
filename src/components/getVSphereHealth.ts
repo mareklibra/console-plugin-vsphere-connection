@@ -65,13 +65,6 @@ export const getVSphereHealth = (
 
   const invCreds = getPrometheusMetricValue(prometheusResult, 'InvalidCredentials');
 
-  // console.log(
-  //   '--- invCreds[0]: ',
-  //   invCreds?.[0],
-  //   ', formatted: ',
-  //   new Date(invCreds?.[0] || 0).toLocaleDateString(),
-  // );
-
   if (invCreds?.[0] && toInteger(invCreds?.[1]) > 0) {
     console.error('Prometheus query - invalid credentials: ', invCreds);
     // TODO: Add timestamp to the message but where to get it from?? It's not invCreds[0]
@@ -96,5 +89,8 @@ export const getVSphereHealth = (
     };
   }
 
-  return { state: HealthState.OK };
+  return {
+    state:
+      HealthState.PROGRESS /* To be changed. Since the Problem detector is unreliable, we can not be sure about the result so showing Progress instead and instructing the user to take actions to verify. */,
+  };
 };

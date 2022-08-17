@@ -2,7 +2,6 @@ import * as React from 'react';
 import { k8sGet, StatusPopupItem, StatusPopupSection } from '@openshift-console/dynamic-plugin-sdk';
 import { CheckCircleIcon, InProgressIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import { Stack, StackItem } from '@patternfly/react-core';
 import { TFunction } from 'react-i18next';
 import { useTranslation } from '../i18n';
 import {
@@ -84,21 +83,12 @@ export const VSphereOperatorStatuses: React.FC = () => {
   }, [timmer, t]);
 
   return (
-    <Stack hasGutter>
-      <StackItem>
-        {t(
-          'Once the configuration is saved, please check status of following operators in approximately 30 minutes to see if provided data are correct.',
-        )}
-      </StackItem>
-      <StackItem>
-        <StatusPopupSection firstColumn={t('Operator')} secondColumn={t('Status')}>
-          <StatusPopupItem value={kubeControllerManager.message} icon={kubeControllerManager.icon}>
-            <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-controller-manager`}>
-              Kube Controller Manager
-            </Link>
-          </StatusPopupItem>
-        </StatusPopupSection>
-      </StackItem>
-    </Stack>
+    <StatusPopupSection firstColumn={t('Operator')} secondColumn={t('Status')}>
+      <StatusPopupItem value={kubeControllerManager.message} icon={kubeControllerManager.icon}>
+        <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-controller-manager`}>
+          Kube Controller Manager
+        </Link>
+      </StatusPopupItem>
+    </StatusPopupSection>
   );
 };

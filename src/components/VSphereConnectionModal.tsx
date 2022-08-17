@@ -147,31 +147,6 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         isSaving ? <InProgress key="progress" text={t('Saving...')} /> : null,
       ]}
     >
-      {/* {isPersistLong && (
-        <Alert
-          isInline
-          title={t('Verifying vSphere connection takes long time')}
-          variant={AlertVariant.info}
-        >
-          {t('Verifying the connection takes longer than expected.')}
-          {t(
-            'It must not be an error, the nodes need to be automatically updated prior establishing vSphere connection.',
-          )}
-          <br />
-          {t('To monitor progress')}
-          <ul>
-            <li>{t('double-check the entered configuration is correct')}</li>
-            <li>{t('make sure all control plane nodes are healthy')}</li>
-            <li>
-              {t(
-                'check status of cluster operators to be ready, especially the kube-controller-manager',
-              )}
-            </li>
-            <li>{t('or create a vSphere StorageClass and PVC for it and debug further')}</li>
-          </ul>
-        </Alert>
-      )} */}
-
       <Stack>
         <StackItem>
           {!error && !isSaving && params.health.state === HealthState.WARNING && (
@@ -196,7 +171,26 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
           <VSphereConnectionForm {...params} formId={formId} />
         </StackItem>
         <StackItem>
-          <VSphereOperatorStatuses />
+          <Stack hasGutter>
+            <StackItem>
+              <VSphereOperatorStatuses />
+            </StackItem>
+            <StackItem>
+              <Alert
+                variant={AlertVariant.info}
+                isInline
+                title={t('Delayed propagation of configuration')}
+              >
+                {t(
+                  'Once the configuration is saved, please check status of the operators above in approximately 30 minutes to see if provided data are correct.',
+                )}
+                <br />
+                {t(
+                  'Please note, existing resources (like bound PVCs) will not be affected by later changes.',
+                )}
+              </Alert>
+            </StackItem>
+          </Stack>
         </StackItem>
       </Stack>
     </Modal>

@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
-import {
-  HealthState,
-  StatusPopupItem,
-  StatusPopupSection,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { HealthState } from '@openshift-console/dynamic-plugin-sdk';
 import {
   PrometheusHealthPopupProps,
   PrometheusHealthHandler,
 } from '@openshift-console/dynamic-plugin-sdk/lib/extensions/dashboard-types';
-import { Link } from 'react-router-dom';
 
 import { useTranslation } from '../../i18n';
 import { VSphereConnection } from '../VSphereConnection';
@@ -17,6 +12,7 @@ import { ConfigMap } from '../../resources';
 import { getVSphereHealth } from '../getVSphereHealth';
 
 import './VSphereStatus.css';
+import { VSphereOperatorStatuses } from '../VSphereOperatorStatuses';
 
 // https://issues.redhat.com/browse/MGMT-9085
 // https://access.redhat.com/solutions/6677901
@@ -29,7 +25,10 @@ const VSphereStatus: React.FC<
   const { t } = useTranslation();
   const health = getVSphereHealth(t, responses, k8sResult);
 
-  if ([HealthState.OK, HealthState.WARNING].includes(health.state) && k8sResult?.data) {
+  if (
+    [HealthState.OK, HealthState.WARNING, HealthState.PROGRESS].includes(health.state) &&
+    k8sResult?.data
+  ) {
     const cloudProviderConfig = k8sResult.data as ConfigMap | undefined;
     return (
       <VSphereConnection hide={hide} cloudProviderConfig={cloudProviderConfig} health={health} />
@@ -49,13 +48,7 @@ const VSphereStatus: React.FC<
       <Stack hasGutter>
         <StackItem>{t('The vSphere Connection check is failing.')}</StackItem>
         <StackItem>
-          <StatusPopupSection firstColumn={t('Resource')} secondColumn={t('Status')}>
-            <StatusPopupItem value={health.message}>
-              <Link to="/monitoring/query-browser?query0=vsphere_sync_errors">
-                {t('vSphere Problem Detector')}
-              </Link>
-            </StatusPopupItem>
-          </StatusPopupSection>
+          <VSphereOperatorStatuses />
         </StackItem>
       </Stack>
     </div>
@@ -68,13 +61,11 @@ export const healthHandler: PrometheusHealthHandler = (responses, _skip, additio
 
   let message: string | undefined = undefined;
   switch (state) {
-    case HealthState.OK:
-      message = 'Problem detection can be delayed';
-      break;
     case HealthState.WARNING:
-    case HealthState.PROGRESS:
-      // pregress is recently not used, it would require making this healthHandler asynchronous to load more data
       message = health.message;
+      break;
+    case HealthState.PROGRESS:
+      message = 'Click for more details';
       break;
   }
   return { state, message };
