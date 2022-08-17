@@ -104,7 +104,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
             content={
               <>
                 {t(
-                  "Enter the network address the vCenter is running on. It can either be URL or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
+                  "Enter the network address the vCenter is running on. It can either be a domain name or IP. If you're unsure, you can try to determine the value from the vSphere Web Client address. Example: ",
                 )}
                 <ul>
                   <li> https://[your_vCenter_address]/ui</li>
@@ -115,7 +115,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
         }
         isRequired
         fieldId="connection-vcenter"
-        helperText={t('vCenter address')}
+        helperText={t('Can be both domain name or IP, see additional info how to get it.')}
       >
         <TextInput
           isRequired
@@ -164,7 +164,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
         labelIcon={
           <PopoverHelpButton
             content={t(
-              'The name of an existing datastore in the the datacenter where the persistent volumes will be stored. Make sure there is a /kubevols folder created in the root of the datastore.',
+              'The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.',
             )}
           />
         }
