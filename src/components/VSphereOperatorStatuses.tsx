@@ -5,7 +5,13 @@ import { Link } from 'react-router-dom';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { TFunction } from 'react-i18next';
 import { useTranslation } from '../i18n';
-import { BooleanString, ClusterOperator, ClusterOperatorModel, getCondition } from '../resources';
+import {
+  BooleanString,
+  ClusterOperator,
+  ClusterOperatorModel,
+  CONSOLE_PREFIX_CLUSTER_OPERATOR,
+  getCondition,
+} from '../resources';
 import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
 
 type OperatorHealthType = {
@@ -87,7 +93,9 @@ export const VSphereOperatorStatuses: React.FC = () => {
       <StackItem>
         <StatusPopupSection firstColumn={t('Operator')} secondColumn={t('Status')}>
           <StatusPopupItem value={kubeControllerManager.message} icon={kubeControllerManager.icon}>
-            <Link to="TODO_link">{t('Kube Controller Manager')}</Link>
+            <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-controller-manager`}>
+              Kube Controller Manager
+            </Link>
           </StatusPopupItem>
         </StatusPopupSection>
       </StackItem>

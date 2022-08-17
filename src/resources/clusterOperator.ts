@@ -7,6 +7,9 @@ export const ClusterOperatorApiVersion: ClusterOperatorApiVersionType = 'config.
 export type ClusterOperatorKindType = 'ClusterOperator';
 export const ClusterOperatorKind: ClusterOperatorKindType = 'ClusterOperator';
 
+export const CONSOLE_PREFIX_CLUSTER_OPERATOR =
+  '/k8s/cluster/config.openshift.io~v1~ClusterOperator';
+
 export type ClusterOperator = K8sResourceCommon & {
   status?: {
     conditions: StatusCondition[];
