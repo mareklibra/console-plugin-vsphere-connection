@@ -128,6 +128,40 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     doItAsync();
   };
 
+  let alert;
+  if (!error && !isSaving && params.health.state === HealthState.WARNING) {
+    alert = (
+      <Alert
+        isInline
+        title={t('vSphere Problem Detector (can be outdated)')}
+        variant={AlertVariant.warning}
+      >
+        {params.health.message}
+      </Alert>
+    );
+  } else if (error) {
+    alert = (
+      <Alert
+        isInline
+        title={error}
+        actionLinks={<AlertActionLink onClick={onSave}>{t('Retry')}</AlertActionLink>}
+        variant={AlertVariant.danger}
+      />
+    );
+  } else {
+    alert = (
+      <Alert variant={AlertVariant.info} isInline title={t('Delayed propagation of configuration')}>
+        {t(
+          'Once the configuration is saved, please check status of the operators above in approximately 30 minutes to see if provided data are correct.',
+        )}
+        <br />
+        {t(
+          'Please note, existing resources (like bound PVCs) will not be affected by later changes.',
+        )}
+      </Alert>
+    );
+  }
+
   return (
     // @ts-expect-error: TODO: Fix TypeScript for ReactPortal
     <Modal
@@ -147,51 +181,14 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         isSaving ? <InProgress key="progress" text={t('Saving...')} /> : null,
       ]}
     >
-      <Stack>
-        <StackItem>
-          {!error && !isSaving && params.health.state === HealthState.WARNING && (
-            <Alert
-              isInline
-              title={t('vSphere Problem Detector (can be outdated)')}
-              variant={AlertVariant.warning}
-            >
-              {params.health.message}
-            </Alert>
-          )}
-          {error && (
-            <Alert
-              isInline
-              title={error}
-              actionLinks={<AlertActionLink onClick={onSave}>{t('Retry')}</AlertActionLink>}
-              variant={AlertVariant.danger}
-            />
-          )}
-        </StackItem>
+      <Stack hasGutter>
         <StackItem>
           <VSphereConnectionForm {...params} formId={formId} />
         </StackItem>
         <StackItem>
-          <Stack hasGutter>
-            <StackItem>
-              <VSphereOperatorStatuses />
-            </StackItem>
-            <StackItem>
-              <Alert
-                variant={AlertVariant.info}
-                isInline
-                title={t('Delayed propagation of configuration')}
-              >
-                {t(
-                  'Once the configuration is saved, please check status of the operators above in approximately 30 minutes to see if provided data are correct.',
-                )}
-                <br />
-                {t(
-                  'Please note, existing resources (like bound PVCs) will not be affected by later changes.',
-                )}
-              </Alert>
-            </StackItem>
-          </Stack>
+          <VSphereOperatorStatuses />
         </StackItem>
+        <StackItem>{alert}</StackItem>
       </Stack>
     </Modal>
   );

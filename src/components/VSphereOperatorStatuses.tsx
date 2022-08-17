@@ -12,6 +12,7 @@ import {
   getCondition,
 } from '../resources';
 import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
+import { ExpandableSection } from '@patternfly/react-core';
 
 type OperatorHealthType = {
   message: string;
@@ -64,6 +65,8 @@ const getOperatorHealth = async (t: TFunction, name: string): Promise<OperatorHe
 
 export const VSphereOperatorStatuses: React.FC = () => {
   const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
   const initialHealth = {
     message: t('Pending'),
     // @ts-expect-error: TODO: Fix TypeScript for ReactPortal
@@ -82,13 +85,35 @@ export const VSphereOperatorStatuses: React.FC = () => {
     doItAsync();
   }, [timmer, t]);
 
+  const onToggle = (isExpanded: boolean) => {
+    setIsExpanded(isExpanded);
+  };
+
+  // TODO: calculate from all vSphere-related operators
+  const worstIconState = kubeControllerManager.icon;
+
   return (
-    <StatusPopupSection firstColumn={t('Operator')} secondColumn={t('Status')}>
-      <StatusPopupItem value={kubeControllerManager.message} icon={kubeControllerManager.icon}>
-        <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-controller-manager`}>
-          Kube Controller Manager
-        </Link>
-      </StatusPopupItem>
-    </StatusPopupSection>
+    <ExpandableSection
+      toggleContent={
+        <div>
+          {isExpanded && t('Close operator details')}
+          {!isExpanded && (
+            <span>
+              {worstIconState} {t('Expand to see operator details')}
+            </span>
+          )}
+        </div>
+      }
+      onToggle={onToggle}
+      isExpanded={isExpanded}
+    >
+      <StatusPopupSection firstColumn={t('Operator')} secondColumn={t('Status')}>
+        <StatusPopupItem value={kubeControllerManager.message} icon={kubeControllerManager.icon}>
+          <Link to={`${CONSOLE_PREFIX_CLUSTER_OPERATOR}/kube-controller-manager`}>
+            Kube Controller Manager
+          </Link>
+        </StatusPopupItem>
+      </StatusPopupSection>
+    </ExpandableSection>
   );
 };
