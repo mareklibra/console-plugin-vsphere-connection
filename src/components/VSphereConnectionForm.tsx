@@ -27,6 +27,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     defaultdatastore,
     folder,
 
+    setDirty,
     setVcenter,
     setUsername,
     setPassword,
@@ -54,6 +55,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
       setIsLoaded(true);
       await initialLoad(
         {
+          setDirty,
           setVcenter,
           setUsername,
           setPassword,

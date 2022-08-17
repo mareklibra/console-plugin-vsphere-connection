@@ -12,28 +12,50 @@ export const ConnectionFormContextProvider: React.FC<{
   const [datacenter, setDatacenter] = React.useState<string>('');
   const [defaultdatastore, setDefaultdatastore] = React.useState<string>('');
   const [folder, setFolder] = React.useState<string>('');
+  const [isDirty, setDirty] = React.useState(false);
 
   const value = React.useMemo(
     (): ConnectionFormContextData => ({
+      isDirty,
+      setDirty,
+
       vcenter,
-      setVcenter,
+      setVcenter: (v) => {
+        setDirty(true);
+        setVcenter(v);
+      },
 
       username,
-      setUsername,
+      setUsername: (v) => {
+        setDirty(true);
+        setUsername(v);
+      },
 
       password,
-      setPassword,
+      setPassword: (v) => {
+        setDirty(true);
+        setPassword(v);
+      },
 
       datacenter,
-      setDatacenter,
+      setDatacenter: (v) => {
+        setDirty(true);
+        setDatacenter(v);
+      },
 
       defaultdatastore,
-      setDefaultdatastore,
+      setDefaultdatastore: (v) => {
+        setDirty(true);
+        setDefaultdatastore(v);
+      },
 
       folder,
-      setFolder,
+      setFolder: (v) => {
+        setDirty(true);
+        setFolder(v);
+      },
     }),
-    [datacenter, defaultdatastore, folder, password, username, vcenter],
+    [datacenter, defaultdatastore, folder, isDirty, password, username, vcenter],
   );
 
   return <ConnectionFormContext.Provider value={value}>{children}</ConnectionFormContext.Provider>;

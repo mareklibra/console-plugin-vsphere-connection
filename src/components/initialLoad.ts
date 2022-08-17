@@ -44,10 +44,6 @@ export const initialLoad = async (
   const dc = keyValues.datacenter || '';
   const ds = keyValues['default-datastore'] || '';
   const folder = keyValues.folder;
-  setters.setVcenter(server);
-  setters.setDatacenter(dc);
-  setters.setDefaultdatastore(ds);
-  setters.setFolder(folder);
 
   // query Secret
   if (!keyValues['secret-name'] || !keyValues['secret-namespace']) {
@@ -72,8 +68,15 @@ export const initialLoad = async (
     const secretKeyValues = secret.data;
     const username = decodeBase64(secretKeyValues[`${server}.username`]);
     const pwd = decodeBase64(secretKeyValues[`${server}.password`]);
+
+    setters.setVcenter(server);
+    setters.setDatacenter(dc);
+    setters.setDefaultdatastore(ds);
+    setters.setFolder(folder);
     setters.setUsername(username);
     setters.setPassword(pwd);
+
+    setters.setDirty(false);
   } catch (e) {
     console.error(
       `Failed to load "${keyValues['secret-name']}" from "${keyValues['secret-namespace']}" secret: `,

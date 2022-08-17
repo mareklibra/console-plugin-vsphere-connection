@@ -32,7 +32,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState<string>();
 
-  const { vcenter, username, password, datacenter, defaultdatastore, folder } =
+  const { vcenter, username, password, datacenter, defaultdatastore, folder, isDirty } =
     useConnectionFormContext();
 
   const formId = 'vsphere-connection-modal-form';
@@ -119,7 +119,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
       <Button key="cancel" variant="link" onClick={onClose}>
         Cancel
       </Button>
-      <Button key="save" variant="primary" isDisabled={isSaving} onClick={onSave}>
+      <Button key="save" variant="primary" isDisabled={isSaving || !isDirty} onClick={onSave}>
         Save configuration
       </Button>
     </>

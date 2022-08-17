@@ -2,6 +2,8 @@ import { SubsystemHealth } from '@openshift-console/dynamic-plugin-sdk';
 import { ConfigMap } from '../resources';
 
 export type ConnectionFormContextSetters = {
+  setDirty: (v: boolean) => void;
+
   setVcenter: (v: string) => void;
   setUsername: (v: string) => void;
   setPassword: (v: string) => void;
@@ -19,7 +21,10 @@ export type ConnectionFormContextValues = {
   folder: string;
 };
 
-export type ConnectionFormContextData = ConnectionFormContextValues & ConnectionFormContextSetters;
+export type ConnectionFormContextData = ConnectionFormContextValues &
+  ConnectionFormContextSetters & {
+    isDirty: boolean;
+  };
 
 export type VSphereConnectionProps = {
   hide: () => void;
