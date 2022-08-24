@@ -103,11 +103,11 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     alert = (
       <Alert variant={AlertVariant.info} isInline title={t('Delayed propagation of configuration')}>
         {t(
-          'Once the configuration is saved, please check status of the operators above in approximately 30 minutes to see if provided data are correct.',
+          "After saving the configuration, it may take approximately 30 minutes to see if the settings are correct and the operators' statuses are updated.",
         )}
         <br />
         {t(
-          'Please note, existing resources (like bound PVCs) will not be affected by later changes.',
+          'Note, that existing resources (like bound PVCs) will not be affected by later changes.',
         )}
       </Alert>
     );
