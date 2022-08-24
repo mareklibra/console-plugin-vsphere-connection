@@ -27,7 +27,7 @@
   "The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.": "The name of an existing datacenter in the vSphere which the virtual machines backing this cluster are in.",
   "Default data store": "Default data store",
   "The name of an existing datastore in the datacenter where the persistent volumes will be stored.": "The name of an existing datastore in the datacenter where the persistent volumes will be stored.",
-  "Make sure, there is /kubevols folder created in the root of the datastore.": "Make sure, there is /kubevols folder created in the root of the datastore.",
+  "Make sure there is /kubevols folder created in the root of the datastore.": "Make sure there is /kubevols folder created in the root of the datastore.",
   "Virtual Machine Folder": "Virtual Machine Folder",
   "vSphere Problem Detector (can be outdated)": "vSphere Problem Detector (can be outdated)",
   "Retry": "Retry",

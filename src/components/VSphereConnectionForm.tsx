@@ -192,7 +192,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
                   'The name of an existing datastore in the datacenter where the persistent volumes will be stored.',
                 )}
                 <br />
-                {t('Make sure, there is /kubevols folder created in the root of the datastore.')}
+                {t('Make sure there is /kubevols folder created in the root of the datastore.')}
               </>
             }
           />
