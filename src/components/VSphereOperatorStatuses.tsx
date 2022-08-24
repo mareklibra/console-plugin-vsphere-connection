@@ -95,14 +95,9 @@ export const VSphereOperatorStatuses: React.FC = () => {
   return (
     <ExpandableSection
       toggleContent={
-        <div>
-          {isExpanded && t('Close operator details')}
-          {!isExpanded && (
-            <span>
-              {worstIconState} {t('Expand to see operator details')}
-            </span>
-          )}
-        </div>
+        <span>
+          {t('Monitored operators')} {isExpanded ? null : worstIconState}
+        </span>
       }
       onToggle={onToggle}
       isExpanded={isExpanded}
