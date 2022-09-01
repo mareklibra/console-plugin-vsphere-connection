@@ -1,4 +1,3 @@
-#@follow_tag(registry.access.redhat.com/ubi8/nodejs-16:latest)
 FROM registry.access.redhat.com/ubi8/nodejs-16:latest AS builder
 USER root
 RUN corepack enable yarn
@@ -7,7 +6,6 @@ COPY . /opt/app-root/src
 RUN yarn install --frozen-lockfile && yarn build
 
 # Final image
-#@follow_tag(registry.access.redhat.com/ubi8/nginx-118:latest)
 FROM registry.access.redhat.com/ubi8/nginx-118:1-67
 COPY --from=builder /opt/app-root/src/dist/ .
 COPY --from=builder /opt/app-root/src/default.conf "${NGINX_CONFIGURATION_PATH}"
