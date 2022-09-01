@@ -14,14 +14,3 @@ EXPOSE 9443
 
 CMD ["nginx", "-g", "daemon off;"]
 
-LABEL com.redhat.component="console-vsphere-connection-plugin-container" \
-      name="openshift4/console-vsphere-connection-plugin-rhel8" \
-      version="v1.0.0" \
-      upstream_commit="${TODO_CI_ASSISTED_INSTALLER_UPSTREAM_COMMIT}" \
-      summary="OpenShift Console dynamic plugin for setting configuration of vSphere connection." \
-      io.k8s.display-name="OpenShift Console vSphere Connection plugin" \
-      maintainer="Marek Libra <mlibra@redhat.com>" \
-      description="OpenShift Console dynamic plugin for vSphere connection configuration"
-
-
-
