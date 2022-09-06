@@ -1,0 +1,57 @@
+name: "Build container image"
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: '--max-old-space-size=8192'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          path: |
+            /home/runner/.cache/yarn/v6
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/ui/yarn.lock/*') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Yarn hack
+        run: mkdir -p /home/runner/.cache/yarn/v6
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: './ui/yarn.lock'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build
+        run: yarn build
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Prepare env
+        run: |
+          sudo apt-get -y install podman
+          mkdir -p ~/.docker
+      - name: Housekeeping clean old podman resources
+        continue-on-error: true
+        id: housekeeping
+        run: |
+          DATE=$(date --date="21 days ago" + "%Y-%m-%d")
+          podman rm --force $(podman ps -a -q --filter until=$DATE)
+          podman rmi --force $(podman images -a -q --filter un
+     - name: Podman build
+       run: |
+         podman build . -f ./Dockerfile -t quay.io/mlibra/console-plugin-vsphere:latest
+
