@@ -15,7 +15,7 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,md,scss,yaml,yml}'"
   },
   "devDependencies": {
-    "@openshift-console/dynamic-plugin-sdk": "0.0.13",
+    "@openshift-console/dynamic-plugin-sdk": "0.0.16",
     "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.8",
     "@openshift-console/plugin-shared": "^0.0.1",
     "@patternfly/react-core": "4.214.1",
