@@ -1,16 +1,10 @@
 /* eslint-env node */
 
-import { Configuration as WebpackConfiguration } from 'webpack';
-import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import * as CopyPlugin from 'copy-webpack-plugin';
-import * as path from 'path';
-import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
+const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path');
+const { ConsoleRemotePlugin } =require('@openshift-console/dynamic-plugin-sdk-webpack');
 
-interface Configuration extends WebpackConfiguration {
-  devServer?: WebpackDevServerConfiguration;
-}
-
-const config: Configuration = {
+const config = {
   mode: 'development',
   context: path.resolve(__dirname, 'src'),
   entry: {},
@@ -86,4 +80,5 @@ if (process.env.NODE_ENV === 'production') {
   }
 }
 
-export default config;
+module.exports = config;
+// export default config;
