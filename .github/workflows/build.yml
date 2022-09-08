@@ -6,7 +6,6 @@ on:
   push:
     branches: [main]
 
-# The non-container build steps bellow will be removed in the future
 jobs:
   build:
     name: Cuild container Images
@@ -32,7 +31,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: './yarn.lock'
       - name: Install dependencies
-        run: yarn install
+        run: yarn install # do not use "--frozen-lockfile" here
+      - name: Check yarn.lock
+        run: |
+          echo 'If stip step fails, the yarn.lock does not conform the package.json, run "yarn update-update-frozen_node_modules"' 
+          git diff --quiet
       - name: Build
         run: yarn build
       # Add tests here
