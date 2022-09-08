@@ -3,7 +3,10 @@ USER root
 RUN corepack enable yarn
 
 COPY . /opt/app-root/src
-RUN yarn install --frozen-lockfile && yarn build
+
+# Simulate offline build environment. Check hack/README.md for more details
+RUN tar -xf ./hack/frozen_node_modules.tar.xz # skip yarn install
+RUN yarn build
 
 # Final image
 FROM registry.access.redhat.com/ubi8/nginx-118:1-67
