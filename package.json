@@ -12,7 +12,8 @@
     "test": "./scripts/test-i18n.sh",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
     "lint": "eslint .",
-    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,md,scss,yaml,yml}'"
+    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,md,scss,yaml,yml}'",
+    "update-update-frozen_node_modules": "./hack/update-frozen_node_modules.sh"
   },
   "devDependencies": {
     "@openshift-console/dynamic-plugin-sdk": "0.0.16",
