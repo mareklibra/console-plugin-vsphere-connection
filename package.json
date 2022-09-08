@@ -5,8 +5,7 @@
   "private": false,
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "yarn clean && NODE_ENV=production yarn ts-node node_modules/.bin/webpack",
-    "build-dev": "yarn clean && yarn ts-node node_modules/.bin/webpack",
+    "build": "yarn clean && NODE_ENV=production node_modules/.bin/webpack",
     "start": "yarn ts-node node_modules/.bin/webpack serve",
     "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
     "test": "./scripts/test-i18n.sh",

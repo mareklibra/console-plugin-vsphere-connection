@@ -6,7 +6,8 @@ COPY . /opt/app-root/src
 
 # Simulate offline build environment. Check hack/README.md for more details
 RUN tar -xf ./hack/frozen_node_modules.tar.xz # skip yarn install
-RUN yarn build
+# RUN yarn build
+RUN ENV=production node ./node_modules/.bin/webpack
 
 # Final image
 FROM registry.access.redhat.com/ubi8/nginx-118:1-67
