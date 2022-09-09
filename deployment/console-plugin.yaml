@@ -1,0 +1,13 @@
+---
+apiVersion: console.openshift.io/v1alpha1
+kind: ConsolePlugin
+metadata:
+  name: console-plugin-vsphere-connection
+  namespace: VSPHERE_NAMESPACE
+spec:
+  displayName: vSphere Connection Configuration
+  service:
+    name: console-plugin-vsphere-connection
+    namespace: VSPHERE_NAMESPACE
+    port: 9443
+    basePath: /
