@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: console-plugin-vsphere-connection
-        image: quay.io/mlibra/console-plugin-vsphere-dockerfile-in:02
+        image: quay.io/mlibra/console-plugin-vsphere-connection:latest
         imagePullPolicy: Always
         ports:
           - name: ui
