@@ -17,7 +17,7 @@ $ sudo dnf install xz
 ### Deployment
 
 ```
-# Have OCP 4.12+
+# Have OCP 4.12+ on the vSphere Platform
 
 # Do an "oc login"
 
