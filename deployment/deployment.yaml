@@ -5,7 +5,7 @@ metadata:
   labels:
     app: console-plugin-vsphere-connection
   name: console-plugin-vsphere-connection
-  namespace: console-plugin-vsphere-connection
+  namespace: VSPHERE_NAMESPACE
 spec:
   progressDeadlineSeconds: 600
   replicas: 1

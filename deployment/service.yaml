@@ -5,7 +5,7 @@ metadata:
   labels:
     app: console-plugin-vsphere-connection
   name: console-plugin-vsphere-connection
-  namespace: console-plugin-vsphere-connection
+  namespace: VSPHERE_NAMESPACE
   annotations:
     service.beta.openshift.io/serving-cert-secret-name: console-plugin-vsphere-connection-tls
 spec:
