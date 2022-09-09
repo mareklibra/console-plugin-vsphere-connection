@@ -22,16 +22,16 @@ $ sudo dnf install xz
 # Do an "oc login"
 
 # Deploy manifests
-$ ./deployment/deploy-plugin.sh
+$ curl -k 'https://raw.githubusercontent.com/mareklibra/console-plugin-vsphere-connection/main/deployment/deploy-plugin.sh' | sh -
 
 # check if the plugins field is specified
 $ oc get consoles.operator.openshift.io cluster --output=jsonpath="{.spec.plugins}"
 
 # if not, then run the following to enable the plugin
-$ kubectl patch consoles.operator.openshift.io cluster --patch '{ "spec": { "plugins": ["console-plugin-vsphere-connection"] } }' --type=merge
+$ oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "plugins": ["console-plugin-vsphere-connection"] } }' --type=merge
 
 # if yes, then run the following to enable the plugin
-$ kubectl patch consoles.operator.openshift.io cluster --patch '[{"op": "add", "path": "/spec/plugins/-", "value": "console-plugin-vsphere-connection" }]' --type=json
+$ oc patch consoles.operator.openshift.io cluster --patch '[{"op": "add", "path": "/spec/plugins/-", "value": "console-plugin-vsphere-connection" }]' --type=json
 ```
 
 ### Local development
