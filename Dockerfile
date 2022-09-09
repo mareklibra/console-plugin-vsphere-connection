@@ -5,6 +5,7 @@ RUN corepack enable yarn
 COPY . /opt/app-root/src
 
 # Simulate offline build environment. Check hack/README.md for more details
+RUN rm -rf ./node_modules
 RUN tar -xf ./hack/frozen_node_modules.tar.xz # skip yarn install
 RUN yarn build
 
