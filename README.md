@@ -2,6 +2,8 @@
 
 Dynamic plugin for the OpenShift console which introduces capability to add vSphere connection.
 
+[Screenshots](./screenshots)
+
 ## QuickStart
 
 ### Prerequisites
