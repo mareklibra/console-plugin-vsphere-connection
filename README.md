@@ -17,9 +17,12 @@ $ sudo dnf install xz
 ### Deployment
 
 ```
-# Note: This project is WIP, distribution model will be clarified later
+# Have OCP 4.12+
 
-# TODO: Add intructions for deployment
+# Do an "oc login"
+
+# Deploy manifests
+$ ./deployment/deploy-plugin.sh
 
 # check if the plugins field is specified
 $ oc get consoles.operator.openshift.io cluster --output=jsonpath="{.spec.plugins}"
