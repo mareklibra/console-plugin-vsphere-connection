@@ -13,7 +13,15 @@ const config: ConnectionFormContextValues = {
 
 tap.test('mergeCloudProviderConfig - empty', (t) => {
   const result = mergeCloudProviderConfig('', config);
-  console.log('-- result: result');
+  t.matchSnapshot(result);
+  t.end();
+});
+
+tap.test('mergeCloudProviderConfig - delete old Virtual Center', (t) => {
+  const result = mergeCloudProviderConfig(
+    '[Global]\n[Workspace]\nfoo=bar\nfoofoo=barbar\n[VirtualCenter "https://will/be/replaced"]',
+    config,
+  );
   t.matchSnapshot(result);
   t.end();
 });

@@ -60,6 +60,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
           defaultdatastore,
           folder,
         },
+        params.cloudProviderConfig,
       );
 
       if (errorMsg) {

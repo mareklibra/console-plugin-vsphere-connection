@@ -75,6 +75,7 @@ export const VSphereConnectionForm: React.FC<VSphereConnectionProps & { formId?:
     isLoaded,
     setDatacenter,
     setDefaultdatastore,
+    setDirty,
     setFolder,
     setPassword,
     setUsername,
