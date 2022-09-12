@@ -41,6 +41,7 @@ export const mergeCloudProviderConfig = (
   configIni.Global['secret-namespace'] = VSPHERE_CREDS_SECRET_NAMESPACE;
   configIni.Global['insecure-flag'] = '1' /* string */;
 
+  // TODO: figure-out how to use quotes here
   configIni.Workspace = configIni.Workspace || {};
   configIni.Workspace['server'] = vcenter;
   configIni.Workspace['datacenter'] = datacenter;

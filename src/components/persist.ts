@@ -17,6 +17,7 @@ const persistSecret = async (
   SecretModel: K8sModel,
   config: ConnectionFormContextValues,
 ): Promise<string | undefined> => {
+  console.log('Calling persistSecret for vSphere');
   const { vcenter, username, password } = config;
 
   const usernameB64 = encodeBase64(username);
@@ -54,6 +55,7 @@ const persistSecret = async (
 
 /** oc patch kubecontrollermanager cluster -p='{"spec": {"forceRedeploymentReason": "recovery-'"$( date --rfc-3339=ns )"'"}}' --type=merge */
 const patchKubeControllerManager = async (t: TFunction): Promise<string | undefined> => {
+  console.log('Calling patchKubeControllerManager()');
   try {
     const cm = await k8sGet<KubeControllerManager>({
       model: KubeControllerManagerModel,
@@ -106,7 +108,6 @@ const persistProviderConfigMap = async (
       cloudProviderConfig.data?.config || '',
       config,
     );
-    console.log('---- configIniString: ', configIniString);
 
     try {
       await k8sPatch({
@@ -193,8 +194,8 @@ export const persist = async (
 
   // return "undefined" if success
   return (
-    persistSecret(t, SecretModel, config) ||
-    patchKubeControllerManager(t) ||
-    persistProviderConfigMap(t, ConfigMapModel, config, cloudProviderConfig)
+    (await persistSecret(t, SecretModel, config)) ||
+    (await patchKubeControllerManager(t)) ||
+    (await persistProviderConfigMap(t, ConfigMapModel, config, cloudProviderConfig))
   );
 };

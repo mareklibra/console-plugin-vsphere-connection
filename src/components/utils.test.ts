@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import tap from 'tap';
 import { ConnectionFormContextValues } from './types';
 import { mergeCloudProviderConfig } from './utils';
