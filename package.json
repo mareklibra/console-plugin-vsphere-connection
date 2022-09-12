@@ -4,8 +4,11 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "yarn clean && NODE_ENV=production node_modules/.bin/webpack",
+    "clean": "rm -rf dist tsconfig.json",
+    "prebuild": "yarn clean && ./hack/prebuild.sh",
+    "prestart": "./hack/prebuild.sh",
+    "pretap": "./hack/pretap.sh",
+    "build": "NODE_ENV=production node_modules/.bin/webpack",
     "start": "yarn ts-node node_modules/.bin/webpack serve",
     "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
     "test": "./scripts/test-i18n.sh && yarn tap",

@@ -1,3 +1,6 @@
+tsconfig.json # use tsconfig.tap.json or tsconfig.build.json instead
+
+
 # Logs
 logs
 *.log
