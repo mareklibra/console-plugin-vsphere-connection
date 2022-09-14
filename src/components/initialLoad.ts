@@ -4,27 +4,7 @@ import { ConfigMap, Secret } from '../resources';
 import { ConnectionFormContextSetters } from './types';
 import { decodeBase64, parseKeyValue } from './utils';
 
-// export const getIsBrandNewConfiguration = (cloudProviderConfig: ConfigMap) => {
-//   const config = cloudProviderConfig.data?.config;
-//   if (!config) {
-//     return false;
-//   }
-
-//   const keyValues = parseKeyValue(config);
-//   const server = keyValues.server || 'x';
-//   const dc = keyValues.datacenter || 'x';
-//   const ds = keyValues['default-datastore'] || 'x';
-//   const folder = keyValues.folder || 'x';
-
-//   // Stupid heuristic based on having placeholders-only. So far they are all in capital letters
-//   return (
-//     server.toUpperCase() === server &&
-//     dc.toUpperCase() === dc &&
-//     ds.toUpperCase() === ds &&
-//     folder.toUpperCase() === folder
-//   );
-// };
-
+// TODO: Adopt npm/ini package to do following parsing (see persist.ts)
 export const initialLoad = async (
   setters: ConnectionFormContextSetters,
   SecretModel: K8sModel,

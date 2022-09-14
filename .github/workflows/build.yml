@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Cuild container Images
+    name: Build container Images
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=8192'
@@ -36,6 +36,8 @@ jobs:
         run: |
           echo 'If stip step fails, the yarn.lock does not conform the package.json, run "yarn update-update-frozen_node_modules"' 
           git diff --quiet
+      - name: Test
+        run: yarn test
       - name: Build
         run: yarn build
       # Add tests here

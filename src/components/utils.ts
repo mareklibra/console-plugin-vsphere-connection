@@ -1,4 +1,7 @@
 import { Buffer } from 'buffer';
+import { encode, decode } from 'ini';
+import { VSPHERE_CREDS_SECRET_NAME, VSPHERE_CREDS_SECRET_NAMESPACE } from '../constants';
+import { ConnectionFormContextValues } from './types';
 
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
   const lines = config.split('\n');
@@ -26,3 +29,47 @@ export const delay = (ms: number) =>
   new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+
+export const mergeCloudProviderConfig = (
+  existingIni: string,
+  { vcenter, datacenter, defaultdatastore, folder }: ConnectionFormContextValues,
+): string => {
+  const configIni = decode(existingIni);
+
+  configIni.Global = configIni.Global || {};
+  configIni.Global['secret-name'] = VSPHERE_CREDS_SECRET_NAME;
+  configIni.Global['secret-namespace'] = VSPHERE_CREDS_SECRET_NAMESPACE;
+  configIni.Global['insecure-flag'] = '1' /* string */;
+
+  // TODO: figure-out how to use quotes here
+  configIni.Workspace = configIni.Workspace || {};
+  configIni.Workspace['server'] = vcenter;
+  configIni.Workspace['datacenter'] = datacenter;
+  configIni.Workspace['default-datastore'] = defaultdatastore;
+  configIni.Workspace['folder'] = folder;
+
+  Object.keys(configIni).forEach((k: string) => {
+    if (k.startsWith('VirtualCenter')) {
+      delete configIni[k];
+    }
+  });
+  configIni[`VirtualCenter "${vcenter}"`] = {
+    datacenters: datacenter,
+  };
+
+  const ini = encode(configIni);
+
+  // correct the encoded string to the expected one
+  const result = ini
+    .split('\n')
+    .map((line: string) => {
+      if (line.startsWith('[VirtualCenter "')) {
+        // We do not want to have the value escaped ("safe")
+        return `[VirtualCenter "${vcenter}"]`;
+      }
+      return line;
+    })
+    .join('\n');
+
+  return result;
+};
