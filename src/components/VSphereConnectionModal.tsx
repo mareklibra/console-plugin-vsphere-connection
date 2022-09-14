@@ -32,7 +32,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
   const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState<string>();
 
-  const { vcenter, username, password, datacenter, defaultdatastore, folder, isDirty } =
+  const { vcenter, username, password, datacenter, defaultdatastore, folder, isDirty, setDirty } =
     useConnectionFormContext();
 
   const formId = 'vsphere-connection-modal-form';
@@ -63,17 +63,19 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
         params.cloudProviderConfig,
       );
 
+      // Done
+      setIsSaving(false);
+
       if (errorMsg) {
         setError(errorMsg);
         setIsSaving(false);
         return;
       }
 
+      // We are all good now
       console.log('vSphere configuration persisted well.');
 
-      // All good now
-      setIsSaving(false);
-
+      setDirty(false); // Or call initialLoad() instead
       // onClose();
     };
 
