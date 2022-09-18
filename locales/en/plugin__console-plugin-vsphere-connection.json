@@ -45,6 +45,9 @@
   "Monitored operators": "Monitored operators",
   "Operator": "Operator",
   "Status": "Status",
+  "Kube API Server": "Kube API Server",
+  "Kube Controller Manager": "Kube Controller Manager",
+  "Storage": "Storage",
   "vSphere connection": "vSphere connection",
   "vSphere configurations": "vSphere configurations",
   "Help": "Help"
