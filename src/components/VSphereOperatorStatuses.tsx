@@ -1,8 +1,19 @@
 import * as React from 'react';
 import { k8sGet, StatusPopupItem, StatusPopupSection } from '@openshift-console/dynamic-plugin-sdk';
-import { CheckCircleIcon, InProgressIcon } from '@patternfly/react-icons';
+import {
+  CheckCircleIcon,
+  InProgressIcon,
+  ExclamationCircleIcon,
+  UnknownIcon,
+} from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import { TFunction } from 'react-i18next';
+import {
+  global_palette_green_500 as okColor,
+  global_palette_red_100 as errorColor,
+} from '@patternfly/react-tokens';
+import { ExpandableSection } from '@patternfly/react-core';
+
 import { useTranslation } from '../i18n';
 import {
   BooleanString,
@@ -11,8 +22,8 @@ import {
   CONSOLE_PREFIX_CLUSTER_OPERATOR,
   getCondition,
 } from '../resources';
-import { global_palette_green_500 as okColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
-import { ExpandableSection } from '@patternfly/react-core';
+import { delay } from './utils';
+import { DELAY_BEFORE_POLLING_RETRY_MEDIUM } from '../constants';
 
 let ohlCounter = 0;
 const OperatorHealthLevel: { [key: string]: number } = {
@@ -61,7 +72,8 @@ const getOperatorHealth = async (t: TFunction, name: string): Promise<OperatorHe
     if (degraded === 'True') {
       return {
         message: t('Degraded'),
-        icon: undefined,
+        // @ts-expect-error: TODO: Fix TypeScript for ReactPortal
+        icon: <ExclamationCircleIcon color={errorColor.value} />,
         level: OperatorHealthLevel.Degraded,
       };
     }
@@ -77,14 +89,16 @@ const getOperatorHealth = async (t: TFunction, name: string): Promise<OperatorHe
 
     return {
       message: t('Unknown'),
-      icon: undefined,
+      // @ts-expect-error: TODO: Fix TypeScript for ReactPortal
+      icon: <UnknownIcon />,
       level: OperatorHealthLevel.Unknown,
     };
   } catch (e) {
     console.error('Error getting operator status: ', name, e);
     return {
       message: t('Error'),
-      icon: undefined,
+      // @ts-expect-error: TODO: Fix TypeScript for ReactPortal
+      icon: <ExclamationCircleIcon color={errorColor.value} />,
       level: OperatorHealthLevel.Error,
     };
   }
@@ -105,7 +119,8 @@ export const VSphereOperatorStatuses: React.FC = () => {
   const [kubeApiServer, setKubeApiServer] = React.useState<OperatorHealthType>(initialHealth);
   const [storage, setStorage] = React.useState<OperatorHealthType>(initialHealth);
 
-  const timmer = 0; // TODO: add polling
+  const [pollingTimmer, setPollingTimmer] = React.useState<number>(0);
+
   React.useEffect(() => {
     const doItAsync = async () => {
       console.log('--- Polling status of operator');
@@ -113,10 +128,13 @@ export const VSphereOperatorStatuses: React.FC = () => {
       setKubeControllerManager(await getOperatorHealth(t, 'kube-controller-manager'));
       setKubeApiServer(await getOperatorHealth(t, 'kube-apiserver'));
       setStorage(await getOperatorHealth(t, 'storage'));
+
+      await delay(DELAY_BEFORE_POLLING_RETRY_MEDIUM);
+      setPollingTimmer(pollingTimmer + 1);
     };
 
     doItAsync();
-  }, [timmer, t]);
+  }, [pollingTimmer, t]);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);

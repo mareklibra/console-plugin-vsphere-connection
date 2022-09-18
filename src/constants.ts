@@ -14,6 +14,8 @@ export const MAX_RETRY_ATTEMPTS = 60;
 export const MAX_RETRY_ATTEMPTS_CO = 10 * 60; // For monitoring cluster operators, total timeout: MAX_RETRY_ATTEMPTS_CO x DELAY_BEFORE_POLLING_RETRY == 20 minutes
 export const MAX_RETRY_ATTEMPTS_CO_QUICK = 30; // DELAY_BEFORE_POLLING_RETRY x MAX_RETRY_ATTEMPTS_CO_QUICK ~ 1 minute
 export const DELAY_BEFORE_POLLING_RETRY = 2 * 1000; // in ms
+export const DELAY_BEFORE_POLLING_RETRY_MEDIUM = DELAY_BEFORE_POLLING_RETRY * 4;
+
 // export const DELAY_CLUSTER_OPERATOR_RECONCILIATION_STARTS = 10 * 1000; // in ms
 
 // export const LONG_PERSIST_TIMEOUT = 10 * 1000; // 10 secs
