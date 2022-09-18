@@ -123,8 +123,6 @@ export const VSphereOperatorStatuses: React.FC = () => {
 
   React.useEffect(() => {
     const doItAsync = async () => {
-      console.log('--- Polling status of operator');
-
       setKubeControllerManager(await getOperatorHealth(t, 'kube-controller-manager'));
       setKubeApiServer(await getOperatorHealth(t, 'kube-apiserver'));
       setStorage(await getOperatorHealth(t, 'storage'));

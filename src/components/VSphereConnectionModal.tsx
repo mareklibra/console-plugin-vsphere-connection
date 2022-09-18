@@ -106,7 +106,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = (params)
     alert = (
       <Alert variant={AlertVariant.info} isInline title={t('Delayed propagation of configuration')}>
         {t(
-          "After saving the configuration, it may take approximately 30 minutes to see if the settings are correct and the operators' statuses are updated.",
+          "After saving the configuration, it may take approximately one hour to see if the settings are correct and the operators' statuses are updated.",
         )}
         <br />
         {t(
