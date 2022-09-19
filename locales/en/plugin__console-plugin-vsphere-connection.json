@@ -32,7 +32,7 @@
   "vSphere Problem Detector (can be outdated)": "vSphere Problem Detector (can be outdated)",
   "Retry": "Retry",
   "Delayed propagation of configuration": "Delayed propagation of configuration",
-  "After saving the configuration, it may take approximately 30 minutes to see if the settings are correct and the operators' statuses are updated.": "After saving the configuration, it may take approximately 30 minutes to see if the settings are correct and the operators' statuses are updated.",
+  "After saving the configuration, it may take approximately one hour to see if the settings are correct and the operators' statuses are updated.": "After saving the configuration, it may take approximately one hour to see if the settings are correct and the operators' statuses are updated.",
   "Note, that existing resources (like bound PVCs) will not be affected by later changes.": "Note, that existing resources (like bound PVCs) will not be affected by later changes.",
   "Saving...": "Saving...",
   "vSphere connection configuration": "vSphere connection configuration",
@@ -45,6 +45,9 @@
   "Monitored operators": "Monitored operators",
   "Operator": "Operator",
   "Status": "Status",
+  "Kube API Server": "Kube API Server",
+  "Kube Controller Manager": "Kube Controller Manager",
+  "Storage": "Storage",
   "vSphere connection": "vSphere connection",
   "vSphere configurations": "vSphere configurations",
   "Help": "Help"
